@@ -503,6 +503,16 @@
                     <span class="highlight">Você é a pessoa que decidirá aonde ir!</span>
                 </div>
             </div>
+
+            <div class="story-section" data-section="7">
+                <div class="story-text">
+                    <strong>Adaptação por Julio Campos Machado</strong><br><br>
+                    Conheça outros trabalhos do escritor <span class="highlight">Julio Campos Machado</span> na Amazon. 
+                    Autor de mais de 50 livros, incluindo a impactante série Juliette Psicose, 
+                    que explora temas profundos como amor, espiritualidade e mistério.<br><br>
+                    <span class="highlight">Visite sua página na Amazon para descobrir mais obras!</span>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -715,20 +725,38 @@ function showSection(index) {
                     // Para outras seções, oculta imediatamente após a leitura
                     sections[index].classList.remove('visible');
                     
-                    // Mostra o indicador de suspense
-                    const suspenseIndicator = document.getElementById('suspenseIndicator');
-                    suspenseIndicator.classList.add('show');
-                    
-                    // Período de suspense antes da próxima seção
-                    setTimeout(() => {
-                        // Oculta o indicador de suspense
-                        suspenseIndicator.classList.remove('show');
+                    // Se é a última seção (sobre o autor), abre o link da Amazon
+                    if (index === totalSections - 1) {
+                        // Mostra indicador especial para finalização
+                        const suspenseIndicator = document.getElementById('suspenseIndicator');
+                        suspenseIndicator.innerHTML = 'Abrindo página do autor na Amazon<span class="suspense-dots"><span class="dot">.</span><span class="dot">.</span><span class="dot">.</span></span>';
+                        suspenseIndicator.classList.add('show');
                         
-                        if (currentSection < totalSections - 1) {
-                            currentSection++;
-                            showSection(currentSection);
-                        }
-                    }, 5000); // 5 segundos de suspense
+                        // Aguarda 3 segundos e abre o link da Amazon
+                        setTimeout(() => {
+                            window.open('https://www.amazon.com.br/stores/Julio-Campos-Machado/author/B0FF374WNM', '_blank');
+                            suspenseIndicator.classList.remove('show');
+                            // Restaura texto original do indicador
+                            setTimeout(() => {
+                                suspenseIndicator.innerHTML = 'Preparando próxima parte<span class="suspense-dots"><span class="dot">.</span><span class="dot">.</span><span class="dot">.</span></span>';
+                            }, 1000);
+                        }, 3000);
+                    } else {
+                        // Mostra o indicador de suspense
+                        const suspenseIndicator = document.getElementById('suspenseIndicator');
+                        suspenseIndicator.classList.add('show');
+                        
+                        // Período de suspense antes da próxima seção
+                        setTimeout(() => {
+                            // Oculta o indicador de suspense
+                            suspenseIndicator.classList.remove('show');
+                            
+                            if (currentSection < totalSections - 1) {
+                                currentSection++;
+                                showSection(currentSection);
+                            }
+                        }, 5000); // 5 segundos de suspense
+                    }
                 }
             });
         }
