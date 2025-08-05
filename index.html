@@ -675,8 +675,8 @@
         // Configuração da música de fundo
         let audio = new Audio('unbreakable.mp3');
         audio.loop = true;
-        audio.volume = 0.2; // Define volume inicial
-        let isPlaying = true;
+        audio.volume = 0.2; // Define volume inicial em 20%
+        let isPlaying = false; // Inicia como false até conseguir tocar
         
         // Função para alternar play/pause da música
         function toggleBackgroundMusic() {
@@ -688,10 +688,13 @@
                 btn.style.background = '#666';
                 isPlaying = false;
             } else {
-                audio.play();
-                btn.innerHTML = '🎵';
-                btn.style.background = '#ff6b6b';
-                isPlaying = true;
+                audio.play().then(() => {
+                    btn.innerHTML = '🎵';
+                    btn.style.background = '#ff6b6b';
+                    isPlaying = true;
+                }).catch(() => {
+                    console.log('Erro ao reproduzir áudio.');
+                });
             }
         }
         
@@ -701,13 +704,20 @@
             document.getElementById('volumeValue').innerHTML = value + '%';
         }
         
-        // Iniciar música automaticamente
-        audio.play().catch(function(error) {
-            console.log('Autoplay bloqueado pelo navegador. Clique para iniciar a música.');
-            isPlaying = false;
-            document.getElementById('musicBtn').innerHTML = '🔇';
-            document.getElementById('musicBtn').style.background = '#666';
-        });
+        // Função para iniciar música automaticamente
+        function startBackgroundMusic() {
+            audio.play().then(() => {
+                console.log('Música de fundo iniciada automaticamente em 20%.');
+                isPlaying = true;
+                document.getElementById('musicBtn').innerHTML = '🎵';
+                document.getElementById('musicBtn').style.background = '#ff6b6b';
+            }).catch(function(error) {
+                console.log('Autoplay bloqueado pelo navegador. Clique no botão de música para iniciar.');
+                isPlaying = false;
+                document.getElementById('musicBtn').innerHTML = '🔇';
+                document.getElementById('musicBtn').style.background = '#666';
+            });
+        }
 
         // Função para controlar a splash screen
         function initSplashScreen() {
@@ -724,8 +734,12 @@
             }, 4000); // 4 segundos de exibição
         }
 
-        // Inicializar splash screen quando a página carregar
-        document.addEventListener('DOMContentLoaded', initSplashScreen);
+        // Inicializar splash screen e música quando a página carregar
+        document.addEventListener('DOMContentLoaded', function() {
+            initSplashScreen();
+            // Tentar iniciar a música após um pequeno delay para melhor compatibilidade
+            setTimeout(startBackgroundMusic, 500);
+        });
 </script>
 </body>
 </html>
