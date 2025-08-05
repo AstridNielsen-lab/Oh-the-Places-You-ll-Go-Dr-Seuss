@@ -415,7 +415,7 @@
 
     <!-- Imagem flutuante -->
     <div class="floating-image" id="floatingImage">
-        <img src="./Seuss.png" alt="Dr. Seuss" loading="lazy" onerror="this.style.display='none'">
+        <img src="/Seuss.png" alt="Dr. Seuss" loading="lazy" onerror="console.log('Erro ao carregar imagem:', this.src); this.style.display='none';">
     </div>
 
     <!-- Container do livro sobre o fundo -->
@@ -456,8 +456,8 @@
 
     <!-- Áudio de fundo -->
     <audio id="backgroundMusic" loop preload="auto">
-        <source src="./unbreakable.mp3" type="audio/mpeg">
-        <source src="./unbreakable.mp3" type="audio/mp3">
+        <source src="/unbreakable.mp3" type="audio/mpeg">
+        <source src="/unbreakable.mp3" type="audio/mp3">
     </audio>
 
     <script>
