@@ -100,15 +100,8 @@
         .story-text {
             font-size: 1.3em;
             line-height: 1.6;
-            text-align: center !important;
+            text-align: justify;
             margin-bottom: 20px;
-            display: block;
-            width: 100%;
-        }
-        
-        /* Garantir que todas as seções da história sejam centralizadas */
-        .story-section .story-text {
-            text-align: center !important;
         }
 
         .story-section {
@@ -378,51 +371,16 @@
         pointer-events: auto;
     }
 
-        .story-image img {
-            width: 100%;
-            height: 100%;
-            border-radius: 15px;
-            box-shadow: 0 25px 50px rgba(0,0,0,0.3);
-            border: 3px solid rgba(255, 255, 255, 0.8);
-            display: block;
-            object-fit: cover;
-            object-position: center;
-            opacity: 0.85; /* Adiciona transparência à imagem para integração com o card */
-        }
-
-        /* Indicador de suspense */
-        .suspense-indicator {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 200;
-            color: #ff6b6b;
-            font-size: 2em;
-            font-weight: bold;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
-            opacity: 0;
-            transition: opacity 0.5s ease-in-out;
-            pointer-events: none;
-        }
-
-        .suspense-indicator.show {
-            opacity: 1;
-        }
-
-        .suspense-dots {
-            display: inline-block;
-            margin-left: 10px;
-        }
-
-        .suspense-dots .dot {
-            animation: suspensePulse 1.5s infinite;
-        }
-
-        @keyframes suspensePulse {
-            0%, 100% { opacity: 0.3; }
-            50% { opacity: 1; }
-        }
+    .story-image img {
+        width: 100%;
+        height: 100%;
+        border-radius: 15px;
+        box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+        border: 3px solid rgba(255, 255, 255, 0.8);
+        display: block;
+        object-fit: cover;
+        object-position: center;
+    }
     </style>
 </head>
 <body>
@@ -510,25 +468,7 @@
                     <span class="highlight">Você é a pessoa que decidirá aonde ir!</span>
                 </div>
             </div>
-
-            <div class="story-section" data-section="7">
-                <div class="story-text">
-                    <strong>Adaptação por Julio Campos Machado</strong><br><br>
-                    Conheça outros trabalhos do escritor <span class="highlight">Julio Campos Machado</span> na Amazon. 
-                    Autor de mais de 50 livros, incluindo a impactante série Juliette Psicose, 
-                    que explora temas profundos como amor, espiritualidade e mistério.<br><br>
-                    <span class="highlight">Visite sua página na Amazon para descobrir mais obras!</span>
-                </div>
-            </div>
         </div>
-    </div>
-
-    <!-- Indicador de suspense -->
-    <div class="suspense-indicator" id="suspenseIndicator">
-        Preparando próxima parte
-        <span class="suspense-dots">
-            <span class="dot">.</span><span class="dot">.</span><span class="dot">.</span>
-        </span>
     </div>
 
     <!-- Controles de áudio no canto superior direito -->
@@ -566,83 +506,53 @@
         function setVoiceList() {
             voices = synth.getVoices();
             
-            // Lista de nomes de vozes femininas conhecidas (priorizando francesas)
+            // Lista de nomes de vozes femininas conhecidas
             const femaleVoiceNames = [
-                'amelie', 'audrey', 'aurelia', 'marie', 'francoise', 'brigitte', 'camille',
                 'alice', 'samantha', 'karen', 'helena', 'ana', 'maria', 'lucia', 'sofia',
                 'joana', 'monica', 'fernanda', 'beatriz', 'clara', 'julia', 'isabella',
                 'google português', 'google brasil', 'microsoft helena', 'microsoft maria',
                 'vicki', 'victoria', 'susan', 'allison', 'ava', 'serena', 'catherine',
-                'fiona', 'kate', 'carmit'
+                'fiona', 'kate', 'carmit', 'amelie', 'audrey', 'aurelia', 'marie'
             ];
             
-            // Busca vozes femininas por prioridade (com foco na consistência da voz)
-            if (!femaleVoice) { // Apenas encontra uma vez no início
-                femaleVoice = 
-                    // 1. Vozes francesas em português brasileiro
-                    voices.find(voice =e 
-                        (voice.lang.includes('pt-BR') || voice.lang.includes('pt_BR')) 66
-                        (voice.name.toLowerCase().includes('french') ||
-                         voice.name.toLowerCase().includes('francais') ||
-                         voice.name.toLowerCase().includes('france') ||
-                         voice.name.toLowerCase().includes('amelie') ||
-                         voice.name.toLowerCase().includes('audrey') ||
-                         voice.name.toLowerCase().includes('marie'))
-                    ) ||
-                    // 2. Vozes francesas femininas (qualquer idioma)
-                    voices.find(voice =e 
-                        (voice.name.toLowerCase().includes('french') ||
-                         voice.name.toLowerCase().includes('francais') ||
-                         voice.name.toLowerCase().includes('france')) 66
-                        (voice.name.toLowerCase().includes('female') ||
-                         voice.name.toLowerCase().includes('feminina') ||
-                         femaleVoiceNames.some(name =e voice.name.toLowerCase().includes(name)))
-                    ) ||
-                    // 3. Vozes em português com nomes femininos franceses
-                    voices.find(voice =e 
-                        voice.lang.includes('pt') 66 
-                        (voice.name.toLowerCase().includes('amelie') ||
-                         voice.name.toLowerCase().includes('audrey') ||
-                         voice.name.toLowerCase().includes('aurelia') ||
-                         voice.name.toLowerCase().includes('marie'))
-                    ) ||
-                    // 4. Vozes em português com nomes femininos
-                    voices.find(voice =e 
-                        voice.lang.includes('pt') 66 
-                        femaleVoiceNames.some(name =e voice.name.toLowerCase().includes(name))
-                    ) ||
-                    // 5. Vozes em português do Brasil
-                    voices.find(voice =e 
-                        (voice.lang.includes('pt-BR') || voice.lang.includes('pt_BR')) 66
-                        !voice.name.toLowerCase().includes('male') 66
-                        !voice.name.toLowerCase().includes('masculin')
-                    ) ||
-                    // 6. Vozes femininas em inglês
-                    voices.find(voice =e 
-                        voice.lang.includes('en') 66 
-                        femaleVoiceNames.some(name =e voice.name.toLowerCase().includes(name))
-                    ) ||
-                    // 7. Qualquer voz que contenha 'female' ou 'feminina'
-                    voices.find(voice =e 
-                        voice.name.toLowerCase().includes('female') ||
-                        voice.name.toLowerCase().includes('feminina')
-                    ) ||
-                    // 8. Vozes Google (geralmente femininas por padrão)
-                    voices.find(voice =e 
-                        voice.name.toLowerCase().includes('google') 66
-                        !voice.name.toLowerCase().includes('male')
-                    ) ||
-                    // 9. Último recurso: primeira voz que NÃO seja explicitamente masculina
-                    voices.find(voice =e 
-                        !voice.name.toLowerCase().includes('male') 66
-                        !voice.name.toLowerCase().includes('masculin') 66
-                        !voice.name.toLowerCase().includes('david') 66
-                        !voice.name.toLowerCase().includes('mark') 66
-                        !voice.name.toLowerCase().includes('daniel') 66
-                        !voice.name.toLowerCase().includes('jorge') 66
-                        !voice.name.toLowerCase().includes('carlos')
-                    );
-            }
+            // Busca vozes femininas por prioridade
+            femaleVoice = 
+                // 1. Vozes em português com nomes femininos
+                voices.find(voice => 
+                    voice.lang.includes('pt') && 
+                    femaleVoiceNames.some(name => voice.name.toLowerCase().includes(name))
+                ) ||
+                // 2. Vozes em português do Brasil
+                voices.find(voice => 
+                    (voice.lang.includes('pt-BR') || voice.lang.includes('pt_BR')) &&
+                    !voice.name.toLowerCase().includes('male') &&
+                    !voice.name.toLowerCase().includes('masculin')
+                ) ||
+                // 3. Vozes femininas em inglês
+                voices.find(voice => 
+                    voice.lang.includes('en') && 
+                    femaleVoiceNames.some(name => voice.name.toLowerCase().includes(name))
+                ) ||
+                // 4. Qualquer voz que contenha 'female' ou 'feminina'
+                voices.find(voice => 
+                    voice.name.toLowerCase().includes('female') ||
+                    voice.name.toLowerCase().includes('feminina')
+                ) ||
+                // 5. Vozes Google (geralmente femininas por padrão)
+                voices.find(voice => 
+                    voice.name.toLowerCase().includes('google') &&
+                    !voice.name.toLowerCase().includes('male')
+                ) ||
+                // 6. Último recurso: primeira voz que NÃO seja explicitamente masculina
+                voices.find(voice => 
+                    !voice.name.toLowerCase().includes('male') &&
+                    !voice.name.toLowerCase().includes('masculin') &&
+                    !voice.name.toLowerCase().includes('david') &&
+                    !voice.name.toLowerCase().includes('mark') &&
+                    !voice.name.toLowerCase().includes('daniel') &&
+                    !voice.name.toLowerCase().includes('jorge') &&
+                    !voice.name.toLowerCase().includes('carlos')
+                );
                 
             // Se ainda não encontrou, usa a primeira voz disponível
             if (!femaleVoice && voices.length > 0) {
@@ -650,31 +560,10 @@
             }
         }
 
-        // Força a seleção inicial da voz para manter consistência
-        let voiceInitialized = false;
-        
-        function initializeVoice() {
-            if (!voiceInitialized && synth.getVoices().length > 0) {
-                setVoiceList();
-                voiceInitialized = true;
-                console.log('Voz selecionada:', femaleVoice ? femaleVoice.name : 'Nenhuma voz encontrada');
-            }
-        }
-        
-        // Tenta inicializar imediatamente
-        initializeVoice();
-        
-        // Backup para quando as vozes carregarem
+        setVoiceList();
         if (synth.onvoiceschanged !== undefined) {
-            synth.onvoiceschanged = function() {
-                if (!voiceInitialized) {
-                    initializeVoice();
-                }
-            };
+            synth.onvoiceschanged = setVoiceList;
         }
-        
-        // Força inicialização após um delay se necessário
-        setTimeout(initializeVoice, 1000);
 
         // Narrar texto em voz feminina
         function narrateText(text, callback) {
@@ -744,9 +633,9 @@
             showStoryImage(5000);
         }
 
-function showSection(index) {
+        function showSection(index) {
             sections.forEach((section, i) => {
-                if (i === index) {
+                if (i <= index) {
                     section.classList.add('visible');
                 } else {
                     section.classList.remove('visible');
@@ -757,63 +646,22 @@ function showSection(index) {
             narrateText(textContent, function() {
                 // Se é a primeira seção (index 0), exibe a imagem após a narração
                 if (index === 0) {
-                    showStoryImage(3000); // Exibe por 3 segundos
+                    showStoryImage(10000); // Exibe por 10 segundos
                     
-                    // Aguarda a imagem ser exibida antes de ocultar a seção
+                    // Aguarda 10 segundos + tempo da animação antes de continuar
                     setTimeout(() => {
-                        // Oculta a seção após mostrar a imagem
-                        sections[index].classList.remove('visible');
-                        
-                        // Mostra o indicador de suspense
-                        const suspenseIndicator = document.getElementById('suspenseIndicator');
-                        suspenseIndicator.classList.add('show');
-                        
-                        // Período de suspense antes da próxima seção
-                        setTimeout(() => {
-                            // Oculta o indicador de suspense
-                            suspenseIndicator.classList.remove('show');
-                            
-                            if (currentSection < totalSections - 1) {
-                                currentSection++;
-                                showSection(currentSection);
-                            }
-                        }, 5000); // 5 segundos de suspense
-                    }, 3500); // 3.5 segundos (tempo da imagem + buffer)
+                        if (currentSection < totalSections - 1) {
+                            currentSection++;
+                            showSection(currentSection);
+                        }
+                    }, 11000); // 10 segundos da imagem + 1 segundo de buffer
                 } else {
-                    // Para outras seções, oculta imediatamente após a leitura
-                    sections[index].classList.remove('visible');
-                    
-                    // Se é a última seção (sobre o autor), abre o link da Amazon
-                    if (index === totalSections - 1) {
-                        // Mostra indicador especial para finalização
-                        const suspenseIndicator = document.getElementById('suspenseIndicator');
-                        suspenseIndicator.innerHTML = 'Abrindo página do autor na Amazon<span class="suspense-dots"><span class="dot">.</span><span class="dot">.</span><span class="dot">.</span></span>';
-                        suspenseIndicator.classList.add('show');
-                        
-                        // Aguarda 3 segundos e abre o link da Amazon
+                    // Para outras seções, continua normalmente
+                    if (currentSection < totalSections - 1) {
                         setTimeout(() => {
-                            window.open('https://www.amazon.com.br/stores/Julio-Campos-Machado/author/B0FF374WNM', '_blank');
-                            suspenseIndicator.classList.remove('show');
-                            // Restaura texto original do indicador
-                            setTimeout(() => {
-                                suspenseIndicator.innerHTML = 'Preparando próxima parte<span class="suspense-dots"><span class="dot">.</span><span class="dot">.</span><span class="dot">.</span></span>';
-                            }, 1000);
-                        }, 3000);
-                    } else {
-                        // Mostra o indicador de suspense
-                        const suspenseIndicator = document.getElementById('suspenseIndicator');
-                        suspenseIndicator.classList.add('show');
-                        
-                        // Período de suspense antes da próxima seção
-                        setTimeout(() => {
-                            // Oculta o indicador de suspense
-                            suspenseIndicator.classList.remove('show');
-                            
-                            if (currentSection < totalSections - 1) {
-                                currentSection++;
-                                showSection(currentSection);
-                            }
-                        }, 5000); // 5 segundos de suspense
+                            currentSection++;
+                            showSection(currentSection);
+                        }, 1500); // Delay de 1.5 segundos antes da próxima seção
                     }
                 }
             });
@@ -887,15 +735,8 @@ function showSection(index) {
             }
         });
 
-        // Solicitar permissão para uso de popups
-        function requestPopupPermission() {
-            // Simulação de solicitação (substitua com a lógica desejada ou API se houver)
-            alert('Por favor, permita que a página use popups para uma melhor experiência.');
-        }
-
         // Inicializar
         showSection(0);
-        requestPopupPermission();
 
         // Auto-scroll suave personalizado para trabalhar sem barra de rolagem
         function smoothScrollToCurrentSection() {
