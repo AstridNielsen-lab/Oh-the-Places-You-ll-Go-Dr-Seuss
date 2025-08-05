@@ -121,28 +121,15 @@
             animation: pulse 2s infinite;
         }
 
-        /* Efeito de máquina de escrever e karaokê */
+        /* Efeito de máquina de escrever */
         .typewriter-char {
             opacity: 0;
-            color: #999;
-            transition: all 0.3s ease;
+            color: #333;
+            transition: opacity 0.3s ease;
         }
 
         .typewriter-char.typed {
             opacity: 1;
-            color: #333;
-        }
-
-        .typewriter-char.speaking {
-            color: #ff6b6b;
-            text-shadow: 2px 2px 4px rgba(255, 107, 107, 0.3);
-            font-weight: bold;
-            transform: scale(1.05);
-        }
-
-        .typewriter-char.spoken {
-            color: #4CAF50;
-            text-shadow: 1px 1px 2px rgba(76, 175, 80, 0.2);
         }
 
         .cursor {
@@ -693,30 +680,33 @@ function showCurrentSentence() {
                 }, 100);
             } else {
                 isTyping = false;
-                startKaraokeEffect(sentenceElement);
+                // Texto completamente digitado - pronto para continuar
             }
         }
 
-        function startKaraokeEffect(sentenceElement) {
-            let speakingCharIndex = 0;
-
-            function karaokeStep() {
-                if (speakingCharIndex < sentenceElement.children.length) {
-                    sentenceElement.children[speakingCharIndex].classList.add('speaking');
-                    if (speakingCharIndex > 0) {
-                        sentenceElement.children[speakingCharIndex - 1].classList.remove('speaking');
-                        sentenceElement.children[speakingCharIndex - 1].classList.add('spoken');
-                    }
-                    speakingCharIndex++;
-                    karaokeTimeout = setTimeout(karaokeStep, 100);
+        function startSynchronizedTypewriter(sentenceElement, charDelay) {
+            // Reset para começar do início
+            currentCharIndex = 0;
+            isTyping = true;
+            clearTimeout(typewriterTimeout);
+            
+            // Resetar todos os caracteres para invisível
+            for (let i = 0; i < sentenceElement.children.length; i++) {
+                sentenceElement.children[i].classList.remove('typed');
+            }
+            
+            function revealChar() {
+                if (currentCharIndex < sentenceElement.children.length && isTyping) {
+                    const charElement = sentenceElement.children[currentCharIndex];
+                    charElement.classList.add('typed');
+                    currentCharIndex++;
+                    typewriterTimeout = setTimeout(revealChar, charDelay);
                 } else {
-                    sentenceElement.children[speakingCharIndex - 1].classList.remove('speaking');
-                    sentenceElement.children[speakingCharIndex - 1].classList.add('spoken');
-                    if (isReading) speakCurrentSentence();
+                    isTyping = false;
                 }
             }
-
-            karaokeStep();
+            
+            revealChar();
         }
 
         function updateProgressIndicator() {
@@ -753,6 +743,13 @@ function showCurrentSentence() {
             // Adicionar classe de fala
             const sentenceElement = document.getElementById('currentSentence');
             sentenceElement.classList.add('speaking');
+
+            // Calcular duração estimada da fala e sincronizar com typewriter
+            const estimatedDuration = (sentence.length / speechRate) * 80; // Aproximadamente 80ms por caractere ajustado pela velocidade
+            const charDelay = estimatedDuration / sentence.length;
+            
+            // Iniciar typewriter sincronizado
+            startSynchronizedTypewriter(sentenceElement, charDelay);
 
             currentUtterance.onend = function() {
                 sentenceElement.classList.remove('speaking');
