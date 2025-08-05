@@ -244,16 +244,59 @@
 
         function setVoiceList() {
             voices = synth.getVoices();
-            // Busca por vozes femininas em português ou inglês
-            femaleVoice = voices.find(voice => 
-                (voice.lang.includes('pt') && voice.name.toLowerCase().includes('female')) ||
-                (voice.lang.includes('pt') && voice.name.toLowerCase().includes('feminina')) ||
-                (voice.lang.includes('en') && voice.name.toLowerCase().includes('female')) ||
-                voice.name.toLowerCase().includes('alice') ||
-                voice.name.toLowerCase().includes('samantha') ||
-                voice.name.toLowerCase().includes('karen') ||
-                voice.name.toLowerCase().includes('helena')
-            ) || voices.find(voice => voice.name.toLowerCase().includes('google')) || voices[0];
+            
+            // Lista de nomes de vozes femininas conhecidas
+            const femaleVoiceNames = [
+                'alice', 'samantha', 'karen', 'helena', 'ana', 'maria', 'lucia', 'sofia',
+                'joana', 'monica', 'fernanda', 'beatriz', 'clara', 'julia', 'isabella',
+                'google português', 'google brasil', 'microsoft helena', 'microsoft maria',
+                'vicki', 'victoria', 'susan', 'allison', 'ava', 'serena', 'catherine',
+                'fiona', 'kate', 'carmit', 'amelie', 'audrey', 'aurelia', 'marie'
+            ];
+            
+            // Busca vozes femininas por prioridade
+            femaleVoice = 
+                // 1. Vozes em português com nomes femininos
+                voices.find(voice => 
+                    voice.lang.includes('pt') && 
+                    femaleVoiceNames.some(name => voice.name.toLowerCase().includes(name))
+                ) ||
+                // 2. Vozes em português do Brasil
+                voices.find(voice => 
+                    (voice.lang.includes('pt-BR') || voice.lang.includes('pt_BR')) &&
+                    !voice.name.toLowerCase().includes('male') &&
+                    !voice.name.toLowerCase().includes('masculin')
+                ) ||
+                // 3. Vozes femininas em inglês
+                voices.find(voice => 
+                    voice.lang.includes('en') && 
+                    femaleVoiceNames.some(name => voice.name.toLowerCase().includes(name))
+                ) ||
+                // 4. Qualquer voz que contenha 'female' ou 'feminina'
+                voices.find(voice => 
+                    voice.name.toLowerCase().includes('female') ||
+                    voice.name.toLowerCase().includes('feminina')
+                ) ||
+                // 5. Vozes Google (geralmente femininas por padrão)
+                voices.find(voice => 
+                    voice.name.toLowerCase().includes('google') &&
+                    !voice.name.toLowerCase().includes('male')
+                ) ||
+                // 6. Último recurso: primeira voz que NÃO seja explicitamente masculina
+                voices.find(voice => 
+                    !voice.name.toLowerCase().includes('male') &&
+                    !voice.name.toLowerCase().includes('masculin') &&
+                    !voice.name.toLowerCase().includes('david') &&
+                    !voice.name.toLowerCase().includes('mark') &&
+                    !voice.name.toLowerCase().includes('daniel') &&
+                    !voice.name.toLowerCase().includes('jorge') &&
+                    !voice.name.toLowerCase().includes('carlos')
+                );
+                
+            // Se ainda não encontrou, usa a primeira voz disponível
+            if (!femaleVoice && voices.length > 0) {
+                femaleVoice = voices[0];
+            }
         }
 
         setVoiceList();
@@ -276,9 +319,9 @@
             if (femaleVoice) {
                 utterance.voice = femaleVoice;
             }
-            utterance.rate = 0.8; // Velocidade mais pausada
-            utterance.pitch = 1.1; // Tom ligeiramente mais agudo
-            utterance.volume = 0.9; // Volume
+            utterance.rate = 0.7; // Velocidade bem pausada e calma
+            utterance.pitch = 1.0; // Tom natural e suave
+            utterance.volume = 0.8; // Volume mais suave
             
             synth.speak(utterance);
         }
