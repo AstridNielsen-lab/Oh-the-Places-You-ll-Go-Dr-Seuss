@@ -916,9 +916,9 @@ function showSection(index) {
             alert('Por favor, permita que a página use popups para uma melhor experiência.');
         }
 
-        // Inicializar
-        showSection(0);
-        requestPopupPermission();
+        // Remover inicialização imediata - será feita após splash screen
+        // showSection(0) será chamado em initializeWebsite()
+        // requestPopupPermission(); // Removido para evitar popup antes do site carregar
 
         // Auto-scroll suave personalizado para trabalhar sem barra de rolagem
         function smoothScrollToCurrentSection() {
@@ -1042,18 +1042,27 @@ function showSection(index) {
             setTimeout(() => {
                 splash.classList.add('fade-out');
                 
-                // Após a animação de fade out (1 segundo), remove completamente
+                // Após a animação de fade out (1 segundo), remove completamente e inicia o site
                 setTimeout(() => {
                     splash.style.display = 'none';
+                    // Inicializar o site após a splash screen
+                    initializeWebsite();
                 }, 1000);
             }, 4000); // 4 segundos de exibição
         }
 
-        // Inicializar splash screen e música quando a página carregar
+        // Função para inicializar o website após a splash screen
+        function initializeWebsite() {
+            // Inicializar a primeira seção
+            showSection(0);
+            // Tentar iniciar a música
+            setTimeout(startBackgroundMusic, 500);
+            console.log('Site inicializado após splash screen');
+        }
+
+        // Inicializar splash screen quando a página carregar
         document.addEventListener('DOMContentLoaded', function() {
             initSplashScreen();
-            // Tentar iniciar a música após um pequeno delay para melhor compatibilidade
-            setTimeout(startBackgroundMusic, 500);
         });
 </script>
 </body>
