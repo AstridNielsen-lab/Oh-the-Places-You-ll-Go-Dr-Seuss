@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Oh, the Places You'll Go! - Livro Virtual 3D</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background: linear-gradient(135deg, #ff6b6b, #4ecdc4, #45b7d1);
+            overflow-x: hidden;
+            color: #333;
+        }
+
+        .container {
+            display: flex;
+            height: 100vh;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .world-container {
+            flex: 1;
+            max-width: 700px;
+            position: relative;
+        }
+
+        .world-frame {
+            width: 100%;
+            height: 700px;
+            border: 0;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+
+        .story-container {
+            flex: 1;
+            max-width: 500px;
+            height: 700px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-sizing: border-box;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .book-title {
+            font-size: 2.5em;
+            font-weight: bold;
+            text-align: center;
+            color: #ff6b6b;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .book-author {
+            font-size: 1.2em;
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-style: italic;
+        }
+
+        .story-text {
+            font-size: 1.3em;
+            line-height: 1.6;
+            text-align: justify;
+            margin-bottom: 20px;
+        }
+
+        .story-section {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.8s ease-in-out;
+            margin-bottom: 30px;
+        }
+
+        .story-section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .highlight {
+            background: linear-gradient(120deg, #a8edea 0%, #fed6e3 100%);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+
+        .controls {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+            z-index: 1000;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 25px;
+            background: #ff6b6b;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn:hover {
+            background: #ff5252;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+
+        .progress-bar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 4px;
+            background: #ff6b6b;
+            border-radius: 0 0 20px 20px;
+            transition: width 0.3s ease;
+        }
+
+        @media (max-width: 1200px) {
+            .container {
+                flex-direction: column;
+                height: auto;
+                min-height: 100vh;
+            }
+            
+            .world-container, .story-container {
+                width: 100%;
+                max-width: 700px;
+            }
+            
+            .story-container {
+                height: 500px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="world-container">
+            <iframe 
+                src="https://skybox.blockadelabs.com/e/5f222a5a2d42e1510a1f029bc723817e" 
+                class="world-frame"
+                allow="fullscreen">
+            </iframe>
+        </div>
+
+        <div class="story-container">
+            <div class="book-title">Oh, the Places You'll Go!</div>
+            <div class="book-author">Inspirado na obra de Dr. Seuss</div>
+            
+            <div class="story-section" data-section="0">
+                <div class="story-text">
+                    Hoje é o seu dia! Você está partindo para <span class="highlight">lugares fantásticos</span>! 
+                    Você tem cérebro na cabeça e pés nos sapatos. Você pode se dirigir para qualquer direção que escolher.
+                </div>
+            </div>
+
+            <div class="story-section" data-section="1">
+                <div class="story-text">
+                    Você está <span class="highlight">por conta própria</span>. E você sabe o que sabe. 
+                    E VOCÊ é quem vai decidir aonde ir. Você olhará para cima e para baixo das ruas, 
+                    olhará para elas com cuidado.
+                </div>
+            </div>
+
+            <div class="story-section" data-section="2">
+                <div class="story-text">
+                    Com sua cabeça cheia de cérebros e seus sapatos cheios de pés, 
+                    você é <span class="highlight">inteligente demais</span> para ir por qualquer rua que não seja certa.
+                </div>
+            </div>
+
+            <div class="story-section" data-section="3">
+                <div class="story-text">
+                    E você pode conseguir surpresas maravilhosas e divertidas! 
+                    Você pode encontrar lugares <span class="highlight">brilhantes e coloridos</span> onde crescem as Árvores Truffula.
+                </div>
+            </div>
+
+            <div class="story-section" data-section="4">
+                <div class="story-text">
+                    E então as coisas começam a acontecer, não se preocupe, não tenha medo. 
+                    Nunca se preocupe com o que tem pela frente. <span class="highlight">Você conseguirá</span>!
+                </div>
+            </div>
+
+            <div class="story-section" data-section="5">
+                <div class="story-text">
+                    Às vezes você estará sozinho e se perguntará para onde foi todo mundo. 
+                    Mas então, de repente, você saberá que <span class="highlight">chegou o momento de seguir em frente</span>.
+                </div>
+            </div>
+
+            <div class="story-section" data-section="6">
+                <div class="story-text">
+                    Você tem cérebro na cabeça. Você tem pés nos sapatos. 
+                    Você pode se dirigir para qualquer direção que escolher. 
+                    <span class="highlight">Você é a pessoa que decidirá aonde ir!</span>
+                </div>
+            </div>
+
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+    </div>
+
+    <div class="controls">
+        <button class="btn" onclick="toggleAutoPlay()">⏯️ Auto</button>
+        <button class="btn" onclick="previousSection()">⏮️ Anterior</button>
+        <button class="btn" onclick="nextSection()">⏭️ Próximo</button>
+        <button class="btn" onclick="resetStory()">🔄 Reiniciar</button>
+    </div>
+
+    <script>
+        let currentSection = 0;
+        let isAutoPlay = false;
+        let autoPlayInterval;
+        const sections = document.querySelectorAll('.story-section');
+        const totalSections = sections.length;
+        
+        // Velocidade base para acompanhar a rotação do mundo 3D
+        const sectionDuration = 8000; // 8 segundos por seção
+
+        function showSection(index) {
+            sections.forEach((section, i) => {
+                if (i <= index) {
+                    section.classList.add('visible');
+                } else {
+                    section.classList.remove('visible');
+                }
+            });
+            
+            updateProgressBar(index);
+        }
+
+        function updateProgressBar(index) {
+            const progress = ((index + 1) / totalSections) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+        }
+
+        function nextSection() {
+            if (currentSection < totalSections - 1) {
+                currentSection++;
+                showSection(currentSection);
+            }
+        }
+
+        function previousSection() {
+            if (currentSection > 0) {
+                currentSection--;
+                showSection(currentSection);
+            }
+        }
+
+        function resetStory() {
+            currentSection = 0;
+            showSection(currentSection);
+            stopAutoPlay();
+        }
+
+        function toggleAutoPlay() {
+            if (isAutoPlay) {
+                stopAutoPlay();
+            } else {
+                startAutoPlay();
+            }
+        }
+
+        function startAutoPlay() {
+            isAutoPlay = true;
+            autoPlayInterval = setInterval(() => {
+                if (currentSection < totalSections - 1) {
+                    nextSection();
+                } else {
+                    stopAutoPlay();
+                }
+            }, sectionDuration);
+        }
+
+        function stopAutoPlay() {
+            isAutoPlay = false;
+            if (autoPlayInterval) {
+                clearInterval(autoPlayInterval);
+            }
+        }
+
+        // Controles de teclado
+        document.addEventListener('keydown', (e) => {
+            switch(e.key) {
+                case 'ArrowRight':
+                case ' ':
+                    nextSection();
+                    break;
+                case 'ArrowLeft':
+                    previousSection();
+                    break;
+                case 'r':
+                case 'R':
+                    resetStory();
+                    break;
+                case 'a':
+                case 'A':
+                    toggleAutoPlay();
+                    break;
+            }
+        });
+
+        // Inicializar
+        showSection(0);
+
+        // Auto-scroll suave para acompanhar o conteúdo
+        function smoothScrollToCurrentSection() {
+            const currentSectionElement = sections[currentSection];
+            if (currentSectionElement) {
+                currentSectionElement.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'center'
+                });
+            }
+        }
+
+        // Observador para scroll automático
+        const observer = new MutationObserver(() => {
+            setTimeout(smoothScrollToCurrentSection, 100);
+        });
+
+        sections.forEach(section => {
+            observer.observe(section, { 
+                attributes: true, 
+                attributeFilter: ['class'] 
+            });
+        });
+    </script>
+</body>
+</html>
