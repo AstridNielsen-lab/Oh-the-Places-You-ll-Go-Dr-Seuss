@@ -68,10 +68,16 @@
             padding: 30px 50px;
             box-sizing: border-box;
             box-shadow: 0 15px 30px rgba(0,0,0,0.05);
-            overflow-y: auto;
+            overflow-y: scroll;
+            scrollbar-width: none; /* Firefox */
+            -ms-overflow-style: none; /* Internet Explorer 10+ */
             position: relative;
             margin: 0 auto;
             pointer-events: auto; /* Reativa eventos no container do livro */
+        }
+
+        .story-container::-webkit-scrollbar {
+            display: none; /* Safari and Chrome */
         }
 
         .book-title {
@@ -345,18 +351,22 @@
         opacity: 0;
         transform: scale(0.8);
         transition: all 0.8s ease-in-out;
-        height: 0;
+        max-height: 0;
         overflow: hidden;
+        padding: 0;
     }
 
     .story-image.show {
         opacity: 1;
         transform: scale(1);
-        height: auto;
+        max-height: 500px;
+        padding: 20px 0;
     }
 
     .story-image img {
+        width: auto;
         max-width: 100%;
+        height: auto;
         max-height: 400px;
         border-radius: 15px;
         box-shadow: 0 10px 30px rgba(0,0,0,0.3);
@@ -470,6 +480,7 @@
         <button class="btn" onclick="previousSection()">⏮️ Anterior</button>
         <button class="btn" onclick="nextSection()">⏭️ Próximo</button>
         <button class="btn" onclick="resetStory()">🔄 Reiniciar</button>
+        <button class="btn" onclick="testShowImage()" style="background: #28a745;">🖼️ Teste Imagem</button>
     </div>
 
 
@@ -720,20 +731,65 @@
         // Inicializar
         showSection(0);
 
-        // Auto-scroll suave para acompanhar o conteúdo
+        // Auto-scroll suave personalizado para trabalhar sem barra de rolagem
         function smoothScrollToCurrentSection() {
+            const storyContainer = document.querySelector('.story-container');
             const currentSectionElement = sections[currentSection];
-            if (currentSectionElement) {
-                currentSectionElement.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'center'
-                });
+            
+            if (currentSectionElement && storyContainer) {
+                // Calcula a posição da seção atual em relação ao container
+                const containerRect = storyContainer.getBoundingClientRect();
+                const sectionRect = currentSectionElement.getBoundingClientRect();
+                
+                // Se a seção não está visível ou está parcialmente visível
+                const isVisible = (
+                    sectionRect.top >= containerRect.top &&
+                    sectionRect.bottom <= containerRect.bottom
+                );
+                
+                if (!isVisible) {
+                    // Calcula o scroll necessário para centralizar a seção
+                    const scrollTop = storyContainer.scrollTop;
+                    const targetScroll = scrollTop + (sectionRect.top - containerRect.top) - (containerRect.height / 2) + (sectionRect.height / 2);
+                    
+                    // Animação suave de scroll
+                    const startScroll = scrollTop;
+                    const scrollDistance = targetScroll - startScroll;
+                    const duration = 800; // 800ms para scroll suave
+                    let startTime = null;
+                    
+                    function animateScroll(timestamp) {
+                        if (!startTime) startTime = timestamp;
+                        const progress = Math.min((timestamp - startTime) / duration, 1);
+                        
+                        // Função de easing para movimento mais suave
+                        const easeInOutCubic = progress => progress < 0.5 
+                            ? 4 * progress * progress * progress 
+                            : 1 - Math.pow(-2 * progress + 2, 3) / 2;
+                        
+                        const currentScroll = startScroll + (scrollDistance * easeInOutCubic(progress));
+                        storyContainer.scrollTop = currentScroll;
+                        
+                        if (progress < 1) {
+                            requestAnimationFrame(animateScroll);
+                        }
+                    }
+                    
+                    requestAnimationFrame(animateScroll);
+                }
             }
         }
 
-        // Observador para scroll automático
-        const observer = new MutationObserver(() => {
-            setTimeout(smoothScrollToCurrentSection, 100);
+        // Observador para scroll automático melhorado
+        const observer = new MutationObserver((mutations) => {
+            mutations.forEach((mutation) => {
+                if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+                    const target = mutation.target;
+                    if (target.classList.contains('visible')) {
+                        setTimeout(smoothScrollToCurrentSection, 200);
+                    }
+                }
+            });
         });
 
         sections.forEach(section => {
