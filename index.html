@@ -136,8 +136,8 @@
         /* Imagem flutuante */
         .floating-image {
             position: fixed;
-            width: 100px; /* Tamanho da imagem */
-            height: 100px;
+            width: 150px; /* Tamanho da imagem aumentado */
+            height: 150px;
             opacity: 0;
             transition: opacity 1s ease-in-out, transform 5s linear;
             z-index: 10000; /* Z-index muito alto para aparecer acima de tudo */
@@ -415,7 +415,7 @@
 
     <!-- Imagem flutuante -->
     <div class="floating-image" id="floatingImage">
-        <img src="/Seuss.png" alt="Dr. Seuss" loading="lazy" onerror="console.log('Erro ao carregar imagem:', this.src); this.style.display='none';">
+        <img id="floatingImg" src="Seuss.png" alt="Imagem flutuante" loading="lazy" onerror="console.log('Erro ao carregar imagem:', this.src); this.style.display='none';">
     </div>
 
     <!-- Container do livro sobre o fundo -->
@@ -805,6 +805,8 @@
         // Lógica da imagem flutuante
         let floatingImageInterval;
         let floatingImage = document.getElementById('floatingImage');
+        const floatingImgElement = document.getElementById('floatingImg');
+        const imageSources = ['Seuss.png', 'dragao.png', 'elefante.png']; // Imagens que aparecem aleatoriamente
 
         function startFloatingImage() {
             floatingImageInterval = setInterval(() => {
@@ -817,12 +819,27 @@
             floatingImage.classList.remove('visible');
             
             setTimeout(() => {
-                // Posição aleatória na tela (pode aparecer em qualquer lugar)
-                const maxX = window.innerWidth - 100; // 100px é a largura da imagem
-                const maxY = window.innerHeight - 100; // 100px é a altura da imagem
+                // Selecionar imagem aleatória
+                const randomImageIndex = Math.floor(Math.random() * imageSources.length);
+                const selectedImage = imageSources[randomImageIndex];
+                floatingImgElement.src = selectedImage;
                 
-                const randomX = Math.random() * maxX;
-                const randomY = Math.random() * maxY;
+                // Posição aleatória na tela, mas evitando o container
+                const container = document.querySelector('.story-container');
+                const containerRect = container.getBoundingClientRect();
+                
+                let randomX, randomY;
+                
+                // Loop para garantir que a imagem não apareça dentro do container
+                do {
+                    randomX = Math.random() * (window.innerWidth - 150);
+                    randomY = Math.random() * (window.innerHeight - 150);
+                } while (
+                    randomX < containerRect.right && 
+                    randomX + 150 > containerRect.left &&
+                    randomY < containerRect.bottom && 
+                    randomY + 150 > containerRect.top
+                );
                 
                 // Definir nova posição
                 floatingImage.style.left = randomX + 'px';
