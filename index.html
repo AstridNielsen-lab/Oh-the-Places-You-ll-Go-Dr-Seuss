@@ -39,28 +39,14 @@
             justify-content: center;
             padding: 20px;
             box-sizing: border-box;
-            pointer-events: none; /* Permite cliques passarem para o fundo */
-        }
-
-        .world-container {
-            flex: 1;
-            max-width: 700px;
-            position: relative;
-        }
-
-        .world-frame {
-            width: 100%;
-            height: 700px;
-            border: 0;
-            border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            pointer-events: none;
         }
 
         .story-container {
             width: 80%;
             max-width: 900px;
             height: 60vh;
-            background: rgba(255, 255, 255, 0.25); /* Ainda mais transparente */
+            background: rgba(255, 255, 255, 0.25);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             border: 1px solid rgba(255, 255, 255, 0.1);
@@ -68,25 +54,26 @@
             padding: 30px 50px;
             box-sizing: border-box;
             box-shadow: 0 15px 30px rgba(0,0,0,0.05);
-            overflow-y: scroll;
-            scrollbar-width: none; /* Firefox */
-            -ms-overflow-style: none; /* Internet Explorer 10+ */
             position: relative;
             margin: 0 auto;
-            pointer-events: auto; /* Reativa eventos no container do livro */
-        }
-
-        .story-container::-webkit-scrollbar {
-            display: none; /* Safari and Chrome */
+            pointer-events: auto;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
         }
 
         .book-title {
-            font-size: 2.5em;
+            font-size: 1.5em;
             font-weight: bold;
             text-align: center;
             color: #ff6b6b;
             margin-bottom: 10px;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
         }
 
         .book-author {
@@ -95,25 +82,48 @@
             color: #666;
             margin-bottom: 30px;
             font-style: italic;
+            position: absolute;
+            top: 80px;
+            left: 50%;
+            transform: translateX(-50%);
         }
 
-        .story-text {
-            font-size: 1.3em;
-            line-height: 1.6;
+        /* Container para a frase atual */
+        .current-sentence-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 200px;
+            width: 100%;
             text-align: center;
-            margin-bottom: 20px;
+            margin-top: 60px;
         }
 
-        .story-section {
+        .current-sentence {
+            font-size: 1.8em;
+            line-height: 1.6;
+            color: #333;
             opacity: 0;
             transform: translateY(20px);
             transition: all 0.8s ease-in-out;
-            margin-bottom: 30px;
+            max-width: 100%;
+            padding: 20px;
         }
 
-        .story-section.visible {
+        .current-sentence.visible {
             opacity: 1;
             transform: translateY(0);
+        }
+
+        .current-sentence.speaking {
+            color: #ff6b6b;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
         }
 
         .highlight {
@@ -121,6 +131,16 @@
             padding: 2px 6px;
             border-radius: 4px;
             font-weight: bold;
+        }
+
+        /* Indicador de progresso */
+        .progress-indicator {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #666;
+            font-size: 0.9em;
         }
 
         .controls {
@@ -131,7 +151,7 @@
             display: flex;
             gap: 10px;
             z-index: 1000;
-            pointer-events: auto; /* Garante que os controles funcionem */
+            pointer-events: auto;
         }
 
         .audio-controls {
@@ -218,6 +238,12 @@
             box-shadow: 0 6px 20px rgba(0,0,0,0.3);
         }
 
+        .btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
 
         .splash-screen {
             position: fixed;
@@ -314,11 +340,6 @@
             }
         }
 
-        @keyframes pulse {
-            0%, 100% { opacity: 0.3; }
-            50% { opacity: 1; }
-        }
-
         @media (max-width: 1200px) {
             .container {
                 flex-direction: column;
@@ -326,95 +347,22 @@
                 min-height: 100vh;
             }
             
-            .world-container, .story-container {
-                width: 100%;
-                max-width: 700px;
-            }
-            
             .story-container {
-                height: 500px;
+                width: 95%;
+                height: 70vh;
             }
 
             .splash-title {
                 font-size: 2.5em;
             }
 
-        .splash-subtitle {
-            font-size: 1.4em;
-        }
-    }
+            .splash-subtitle {
+                font-size: 1.4em;
+            }
 
-    /* Estilo para exibição de imagem ocupando toda área transparente com altura 3x maior */
-    .story-image {
-        position: absolute;
-        top: -100%;
-        left: 0;
-        width: 100%;
-        height: 300%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: rgba(255, 255, 255, 0.95);
-        backdrop-filter: blur(15px);
-        -webkit-backdrop-filter: blur(15px);
-        border-radius: 15px;
-        opacity: 0;
-        transform: scale(0.95);
-        transition: all 0.8s ease-in-out;
-        z-index: 100;
-        pointer-events: none;
-    }
-
-    .story-image.show {
-        opacity: 1;
-        transform: scale(1);
-        pointer-events: auto;
-    }
-
-        .story-image img {
-            width: 100%;
-            height: 100%;
-            border-radius: 15px;
-            box-shadow: 0 25px 50px rgba(0,0,0,0.3);
-            border: 3px solid rgba(255, 255, 255, 0.8);
-            display: block;
-            object-fit: cover;
-            object-position: center;
-            opacity: 0.85; /* Adiciona transparência à imagem para integração com o card */
-        }
-
-        /* Indicador de suspense */
-        .suspense-indicator {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 200;
-            color: #ff6b6b;
-            font-size: 2em;
-            font-weight: bold;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
-            opacity: 0;
-            transition: opacity 0.5s ease-in-out;
-            pointer-events: none;
-        }
-
-        .suspense-indicator.show {
-            opacity: 1;
-        }
-
-        .suspense-dots {
-            display: inline-block;
-            margin-left: 10px;
-        }
-
-        .suspense-dots .dot {
-            animation: suspensePulse 1.5s infinite;
-        }
-
-        @keyframes suspensePulse {
-            0%, 100% { opacity: 0.3; }
-            50% { opacity: 1; }
+            .current-sentence {
+                font-size: 1.4em;
+            }
         }
     </style>
 </head>
@@ -450,159 +398,16 @@
             <div class="book-title">Oh, the Places You'll Go!</div>
             <div class="book-author">Inspirado na obra de Dr. Seuss</div>
             
-div class="story-section" data-section="0"
-    div class="story-text"
-        Parabéns!
-        Hoje é o seu dia.
-        Você está a caminho de lugares incríveis! "Você está indo embora!
-    /div
-/div
+            <!-- Container para exibir uma frase por vez -->
+            <div class="current-sentence-container">
+                <div class="current-sentence" id="currentSentence"></div>
+            </div>
 
-div class="story-section" data-section="1"
-    div class="story-text"
-        Você tem cérebro na cabeça.
-        Você tem pés nos sapatos.
-        Você pode se guiar
-        em qualquer direção que escolher.
-        Você está por conta própria. E você sabe o que sabe. E VOCÊ é quem vai decidir para onde ir.
-        c *
-    /div
-/div
-
-div class="story-section" data-section="2"
-    div class="story-text"
-        Você vai olhar as ruas de um lado para o outro. Examine-as com cuidado. Sobre algumas, você dirá: "Eu não escolho ir para lá." Com a cabeça cheia de cérebro e os sapatos cheios de pés, você é esperto demais para entrar em qualquer rua não tão boa.
-        E você pode não encontrar nenhuma que queira entrar.
-        Nesse caso, é claro,
-        você vai direto para fora da cidade.
-        É mais fácil lá
-        ao ar livre.
-        i Lá fora, coisas podem acontecer
-        e frequentemente acontecem
-        com pessoas tão inteligentes
-        e espertas quanto você.
-        E quando as coisas começarem a acontecer,
-
-        não se preocupe. Não se preocupe.
-        Siga em frente.
-        Você também começará a acontecer.
-
-        OH!
-        OS LUGARES PARA ONDE VOCÊ IRÁ!
-        y
-        Você estará no seu caminho para o sucesso! Você verá paisagens incríveis! Você se juntará aos que voam alto e alcançam grandes alturas.
-
-        Você não ficará para trás, porque terá velocidade. Você ultrapassará toda a turma e logo assumirá a liderança. Onde quer que você voe, será o melhor dos melhores. Onde quer que você vá, você superará todos os outros.
-
-        Exceto quando você não conseguir. Porque, às vezes, você não conseguirá. Lamento dizer isso,
-        mas, infelizmente, é verdade
-        que confusões
-        e travamentos
-        podem acontecer com você.
-        Você pode ficar preso
-        em um poleiro espinhoso.
-        E sua turma continuará voando.
-        Você será deixado em um solavanco.
-        "Você descerá de A guinada com um solavanco desagradável.
-        E as chances são, então,
-        de que você esteja em uma depressão.
-
-        E quando você está em uma depressão, não há muita diversão. Sair da depressão
-        não é fácil. Você chegará a um lugar onde as ruas não são sinalizadas. Algumas janelas são iluminadas. Mas a maioria delas é escura. Um lugar onde você pode torcer o cotovelo e o queixo! Você ousa ficar do lado de fora? Você ousa entrar? Quanto você pode perder? Quanto você pode ganhar?
-
-        E SE você entrar, deve virar à esquerda ou à direita... ou à direita e três quartos? Ou, talvez, não exatamente? Ou dar a volta pelos fundos e entrar sorrateiramente por trás? Receio que você descobrirá que não é simples para um decisor se decidir.
-
-        Você pode ficar tão confuso
-        que começará a correr
-        por longas estradas sinuosas em um ritmo alucinante e a avançar por quilômetros através de um espaço selvagem e estranho, indo, temo eu, em direção a um lugar completamente inútil.
-        O Lugar de Espera.
-        \A
-
-        para pessoas que estão apenas esperando.
-        Esperando um trem partir
-        ou um ônibus chegar, ou um avião partir
-        ou o correio chegar, ou a chuva passar ou o telefone tocar, ou a neve cair, ou esperando por um Sim ou Não
-        ou esperando o cabelo crescer.
-        Todo mundo está apenas esperando.
-        Esperando o peixe morder
-        ou esperando o vento empinar uma pipa, ou esperando pela sexta-feira à noite, ou esperando, talvez, pelo seu Tio Jake ou uma panela ferver, ou uma Melhor Chance, ou um colar de pérolas, ou uma calça ou uma peruca com cachos, ou Outra Chance. Todo mundo está apenas esperando.
-
-        NÃO!
-        Isso não é para você!
-        De alguma forma, você escapará
-        de toda essa espera e permanência.
-        Você encontrará os lugares iluminados
-        onde as Boom Bands estão tocando.
-
-        Com faixas esvoaçantes,
-        mais uma vez você voará alto!
-        Pronto para qualquer coisa sob o céu. Pronto porque você é esse tipo de cara!
-
-        Ah, os lugares para onde você irá! Há diversão para fazer! Há pontos para marcar. Há jogos para ganhar. E as coisas mágicas que você pode fazer com essa bola farão de você o vencedor mais vitorioso de todos. Fama! "Se você for famoso o máximo possível,
-        com o mundo inteiro assistindo você vencer na TV
-        Exceto quando eles não vencerem.
-        Porque, às vezes, eles não vencerão.
-        Temo que às vezes
-        você também jogue jogos solitários.
-        Jogos que você não pode vencer
-        porque jogará contra você mesmo.
-
-        Completamente Sozinho!
-        Quer você goste ou não, você estará sozinho por muito tempo.
-
-        E quando estiver sozinho, há uma grande chance
-        de você encontrar coisas que te assustam até a morte.
-        Há algumas, na estrada entre aqui e ali,
-        que podem te assustar tanto que você não vai querer continuar.
-
-        Mas você seguirá
-        mesmo que o tempo esteja ruim. Você seguirá
-        mesmo que seus inimigos rondem. Você seguirá
-        mesmo que os Hakken-Kraks uivem. Em frente, muitos
-        um assustador riacho,
-        embora seus braços possam doer e seus tênis possam vazar.
-
-        Você vai caminhar sem parar. E eu sei que você caminhará longe e enfrentará seus problemas, sejam eles quais forem.
-
-        Você vai se meter em encrenca, é claro,
-        como você já sabe.
-        Você vai se meter
-        com muitos pássaros estranhos pelo caminho.
-        Portanto, tenha cuidado ao pisar.
-        Pise com cuidado e muito tato
-        e lembre-se de que a vida é
-        um grande ato de equilíbrio.
-        Só nunca se esqueça de ser hábil e ágil. E nunca misture o pé direito com o esquerdo.
-
-        E você vai conseguir?
-        Sim! Você vai, de fato!
-        (98% garantido.)
-        GAROTO, VOCÊ VAI MOVER MONTANHAS!
-        Então...
-        seja seu nome Buxbaum, Bixby, Bray
-        ou Mordecai Ali Van Allen O'Shea,
-        você está a caminho de Lugares Incríveis!
-        Hoje é o seu dia!
-        Sua montanha está esperando.
-        Então... siga seu caminho!
-    /div
-/div
-
-div class="story-section" data-section="3"
-    div class="story-text"
-        Preparando próxima parte
-        span class="suspense-dots"span class="dot"./spanspan class="dot"./spanspan class="dot"./span/span
-    /div
+            <!-- Indicador de progresso -->
+            <div class="progress-indicator" id="progressIndicator">
+                Frase 1 de 150
             </div>
         </div>
-    </div>
-
-    <!-- Indicador de suspense -->
-    <div class="suspense-indicator" id="suspenseIndicator">
-        Preparando próxima parte
-        <span class="suspense-dots">
-            <span class="dot">.</span><span class="dot">.</span><span class="dot">.</span>
-        </span>
     </div>
 
     <!-- Controles de áudio no canto superior direito -->
@@ -611,459 +416,365 @@
         <div class="volume-control">
             <span style="color: #666; font-size: 12px;">🔊</span>
             <input type="range" class="volume-slider" id="volumeSlider" min="0" max="100" value="20" oninput="changeVolume(this.value)">
-            <span style="color: #666; font-size: 12px;" id="volumeValue">20%</span>
         </div>
+        <button class="audio-btn" onclick="toggleSpeechRate()" id="speedBtn">1x</button>
     </div>
 
+    <!-- Controles de navegação -->
     <div class="controls">
-        <button class="btn" onclick="toggleNarration()" id="narrationBtn">🔊 Narração</button>
-        <button class="btn" onclick="toggleAutoPlay()">⏯️ Auto</button>
-        <button class="btn" onclick="previousSection()">⏮️ Anterior</button>
-        <button class="btn" onclick="nextSection()">⏭️ Próximo</button>
-        <button class="btn" onclick="resetStory()">🔄 Reiniciar</button>
-        <button class="btn" onclick="testShowImage()" style="background: #28a745;">🖼️ Teste Imagem</button>
+        <button class="btn" onclick="previousSentence()" id="prevBtn">← Anterior</button>
+        <button class="btn" onclick="toggleReading()" id="playBtn">▶ Iniciar Leitura</button>
+        <button class="btn" onclick="nextSentence()" id="nextBtn">Próxima →</button>
+        <button class="btn" onclick="restartReading()" id="restartBtn">🔄 Reiniciar</button>
     </div>
 
+    <!-- Áudio de fundo -->
+    <audio id="backgroundMusic" loop>
+        <source src="https://www.soundjay.com/misc/sounds/magic-chime-02.wav" type="audio/wav">
+    </audio>
 
     <script>
-        let currentSection = 0;
-        let isAutoPlay = false;
-        let autoPlayInterval;
-        let isNarrationEnabled = true;
-        const sections = document.querySelectorAll('.story-section');
-        const totalSections = sections.length;
-
-        const synth = window.speechSynthesis;
-        let voices = [];
-        let femaleVoice = null;
-
-        function setVoiceList() {
-            voices = synth.getVoices();
+        // Texto completo dividido em frases
+        const fullText = `
+            Parabéns! Hoje é o seu dia! Você está partindo para lugares fantásticos! 
+            Você tem cérebro na cabeça e pés nos sapatos. Você pode se dirigir para qualquer direção que escolher.
             
-            // Lista de nomes de vozes femininas conhecidas
-            const femaleVoiceNames = [
-                'alice', 'samantha', 'karen', 'helena', 'ana', 'maria', 'lucia', 'sofia',
-                'joana', 'monica', 'fernanda', 'beatriz', 'clara', 'julia', 'isabella',
-                'google português', 'google brasil', 'microsoft helena', 'microsoft maria',
-                'vicki', 'victoria', 'susan', 'allison', 'ava', 'serena', 'catherine',
-                'fiona', 'kate', 'carmit', 'amelie', 'audrey', 'aurelia', 'marie'
-            ];
+            Você está por conta própria. E você sabe o que sabe. 
+            E VOCÊ é quem vai decidir aonde ir. Você olhará para cima e para baixo das ruas, olhará para elas com cuidado.
             
-            // Busca vozes femininas por prioridade
-            femaleVoice = 
-                // 1. Vozes em português com nomes femininos
-                voices.find(voice => 
-                    voice.lang.includes('pt') && 
-                    femaleVoiceNames.some(name => voice.name.toLowerCase().includes(name))
-                ) ||
-                // 2. Vozes em português do Brasil
-                voices.find(voice => 
-                    (voice.lang.includes('pt-BR') || voice.lang.includes('pt_BR')) &&
-                    !voice.name.toLowerCase().includes('male') &&
-                    !voice.name.toLowerCase().includes('masculin')
-                ) ||
-                // 3. Vozes femininas em inglês
-                voices.find(voice => 
-                    voice.lang.includes('en') && 
-                    femaleVoiceNames.some(name => voice.name.toLowerCase().includes(name))
-                ) ||
-                // 4. Qualquer voz que contenha 'female' ou 'feminina'
-                voices.find(voice => 
-                    voice.name.toLowerCase().includes('female') ||
-                    voice.name.toLowerCase().includes('feminina')
-                ) ||
-                // 5. Vozes Google (geralmente femininas por padrão)
-                voices.find(voice => 
-                    voice.name.toLowerCase().includes('google') &&
-                    !voice.name.toLowerCase().includes('male')
-                ) ||
-                // 6. Último recurso: primeira voz que NÃO seja explicitamente masculina
-                voices.find(voice => 
-                    !voice.name.toLowerCase().includes('male') &&
-                    !voice.name.toLowerCase().includes('masculin') &&
-                    !voice.name.toLowerCase().includes('david') &&
-                    !voice.name.toLowerCase().includes('mark') &&
-                    !voice.name.toLowerCase().includes('daniel') &&
-                    !voice.name.toLowerCase().includes('jorge') &&
-                    !voice.name.toLowerCase().includes('carlos')
-                );
+            Com sua cabeça cheia de cérebros e seus sapatos cheios de pés, você é inteligente demais para ir por qualquer rua que não seja certa.
+            
+            E você pode conseguir surpresas maravilhosas e divertidas! 
+            Você pode encontrar lugares brilhantes e coloridos onde crescem as Árvores Truffula.
+            
+            E então as coisas começam a acontecer, não se preocupe, não tenha medo. 
+            Nunca se preocupe com o que tem pela frente. Você conseguirá!
+            
+            Às vezes você estará sozinho e se perguntará para onde foi todo mundo. 
+            Mas então, de repente, você saberá que chegou o momento de seguir em frente.
+            
+            Com a cabeça cheia de cérebro e os sapatos cheios de pés, você é esperto demais para entrar em qualquer rua não tão boa. 
+            E você pode não encontrar nenhuma que queira entrar. Nesse caso, é claro, você vai direto para fora da cidade.
+            
+            É mais fácil lá ao ar livre. Lá fora, coisas podem acontecer e frequentemente acontecem com pessoas tão inteligentes e espertas quanto você. 
+            E quando as coisas começarem a acontecer, não se preocupe. Não se preocupe. Siga em frente.
+            
+            OH! OS LUGARES PARA ONDE VOCÊ IRÁ!
+            Você estará no seu caminho para o sucesso! Você verá paisagens incríveis! 
+            Você se juntará aos que voam alto e alcançam grandes alturas.
+            
+            Você não ficará para trás, porque terá velocidade. Você ultrapassará toda a turma e logo assumirá a liderança. 
+            Onde quer que você voe, será o melhor dos melhores. Onde quer que você vá, você superará todos os outros.
+            
+            Exceto quando você não conseguir. Porque, às vezes, você não conseguirá. Lamento dizer isso, mas, infelizmente, é verdade que confusões e travamentos podem acontecer com você. 
+            Você pode ficar preso em um poleiro espinhoso.
+            
+            E sua turma continuará voando. Você será deixado em um solavanco. 
+            Você descerá da guinada com um solavanco desagradável. E as chances são, então, de que você esteja em uma depressão.
+            
+            E quando você está em uma depressão, não há muita diversão. Sair da depressão não é fácil. 
+            Você chegará a um lugar onde as ruas não são sinalizadas. Algumas janelas são iluminadas. Mas a maioria delas é escura. 
+            Um lugar onde você pode torcer o cotovelo e o queixo!
+            
+            Você ousa ficar do lado de fora? Você ousa entrar? Quanto você pode perder? Quanto você pode ganhar? 
+            E SE você entrar, deve virar à esquerda ou à direita... ou à direita e três quartos? 
+            Receio que você descobrirá que não é simples para um decisor se decidir.
+            
+            Você pode ficar tão confuso que começará a correr por longas estradas sinuosas em um ritmo alucinante e a avançar por quilômetros através de um espaço selvagem e estranho, indo, temo eu, em direção a um lugar completamente inútil. 
+            O Lugar de Espera.
+            
+            Para pessoas que estão apenas esperando. Esperando um trem partir ou um ônibus chegar, ou um avião partir ou o correio chegar, ou a chuva passar ou o telefone tocar, ou a neve cair, ou esperando por um Sim ou Não ou esperando o cabelo crescer. 
+            Todo mundo está apenas esperando.
+            
+            Esperando o peixe morder ou esperando o vento empinar uma pipa, ou esperando pela sexta-feira à noite, ou esperando, talvez, pelo seu Tio Jake ou uma panela ferver, ou uma Melhor Chance, ou um colar de pérolas, ou uma calça ou uma peruca com cachos, ou Outra Chance. 
+            Todo mundo está apenas esperando.
+            
+            NÃO! Isso não é para você!
+            De alguma forma, você escapará de toda essa espera e permanência. 
+            Você encontrará os lugares iluminados onde as Boom Bands estão tocando.
+            
+            Com faixas esvoaçantes, mais uma vez você voará alto! 
+            Pronto para qualquer coisa sob o céu. Pronto porque você é esse tipo de cara!
+            
+            Ah, os lugares para onde você irá! Há diversão para fazer! Há pontos para marcar. Há jogos para ganhar. 
+            E as coisas mágicas que você pode fazer com essa bola farão de você o vencedor mais vitorioso de todos. Fama!
+            
+            Se você for famoso o máximo possível, com o mundo inteiro assistindo você vencer na TV... 
+            Exceto quando eles não vencerem. Porque, às vezes, eles não vencerão. 
+            Temo que às vezes você também jogue jogos solitários.
+            
+            Jogos que você não pode vencer porque jogará contra você mesmo. 
+            Completamente Sozinho! Quer você goste ou não, você estará sozinho por muito tempo.
+            
+            E quando estiver sozinho, há uma grande chance de você encontrar coisas que te assustam até a morte. 
+            Há algumas, na estrada entre aqui e ali, que podem te assustar tanto que você não vai querer continuar.
+            
+            Mas você seguirá mesmo que o tempo esteja ruim. Você seguirá mesmo que seus inimigos rondem. 
+            Você seguirá mesmo que os Hakken-Kraks uivem. Em frente, muitos um assustador riacho, embora seus braços possam doer e seus tênis possam vazar.
+            
+            Você vai caminhar sem parar. E eu sei que você caminhará longe e enfrentará seus problemas, sejam eles quais forem. 
+            Você vai se meter em encrenca, é claro, como você já sabe. Você vai se meter com muitos pássaros estranhos pelo caminho.
+            
+            Portanto, tenha cuidado ao pisar. Pise com cuidado e muito tato e lembre-se de que a vida é um grande ato de equilíbrio. 
+            Só nunca se esqueça de ser hábil e ágil. E nunca misture o pé direito com o esquerdo.
+            
+            E você vai conseguir? Sim! Você vai, de fato! (98% garantido.)
+            GAROTO, VOCÊ VAI MOVER MONTANHAS!
+            
+            Então... seja seu nome Buxbaum, Bixby, Bray ou Mordecai Ali Van Allen O'Shea, você está a caminho de Lugares Incríveis! 
+            Hoje é o seu dia! Sua montanha está esperando. Então... siga seu caminho!
+            
+            Adaptação por Julio Campos Machado.
+            Conheça outros trabalhos do escritor Julio Campos Machado na Amazon. 
+            Autor de mais de 50 livros, incluindo a impactante série Juliette Psicose, que explora temas profundos como amor, espiritualidade e mistério.
+            Visite sua página na Amazon para descobrir mais obras!
+        `;
+
+        // Variáveis globais
+        let sentences = [];
+        let currentSentenceIndex = 0;
+        let isReading = false;
+        let speechSynthesis = window.speechSynthesis;
+        let currentUtterance = null;
+        let backgroundMusic = document.getElementById('backgroundMusic');
+        let speechRate = 1;
+        let speechRates = [0.5, 0.75, 1, 1.25, 1.5];
+        let currentRateIndex = 2;
+
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', function() {
+            // Processar texto em frases
+            processSentences();
+            
+            // Remover splash screen após 4 segundos
+            setTimeout(() => {
+                document.querySelector('.splash-screen').classList.add('fade-out');
+                setTimeout(() => {
+                    document.querySelector('.splash-screen').style.display = 'none';
+                    showCurrentSentence();
+                }, 1000);
+            }, 4000);
+
+            // Configurar volume inicial
+            backgroundMusic.volume = 0.2;
+        });
+
+        function processSentences() {
+            // Dividir o texto em frases usando pontuação
+            const rawSentences = fullText
+                .replace(/\s+/g, ' ')
+                .trim()
+                .split(/[.!?]+/)
+                .filter(sentence => sentence.trim().length > 0)
+                .map(sentence => sentence.trim());
+
+            sentences = rawSentences;
+            updateProgressIndicator();
+        }
+
+        function showCurrentSentence() {
+            const sentenceElement = document.getElementById('currentSentence');
+            
+            // Fade out
+            sentenceElement.classList.remove('visible');
+            
+            setTimeout(() => {
+                if (currentSentenceIndex < sentences.length) {
+                    sentenceElement.textContent = sentences[currentSentenceIndex];
+                    sentenceElement.classList.add('visible');
+                    updateProgressIndicator();
+                } else {
+                    sentenceElement.textContent = "Fim da leitura! 🎉";
+                    sentenceElement.classList.add('visible');
+                    stopReading();
+                }
+            }, 400);
+        }
+
+        function updateProgressIndicator() {
+            const indicator = document.getElementById('progressIndicator');
+            indicator.textContent = `Frase ${currentSentenceIndex + 1} de ${sentences.length}`;
+        }
+
+        function speakCurrentSentence() {
+            if (currentSentenceIndex >= sentences.length) {
+                stopReading();
+                return;
+            }
+
+            // Parar qualquer fala anterior
+            speechSynthesis.cancel();
+
+            const sentence = sentences[currentSentenceIndex];
+            currentUtterance = new SpeechSynthesisUtterance(sentence);
+            
+            // Configurar voz em português
+            const voices = speechSynthesis.getVoices();
+            const portugueseVoice = voices.find(voice => 
+                voice.lang.includes('pt') || voice.lang.includes('PT')
+            );
+            
+            if (portugueseVoice) {
+                currentUtterance.voice = portugueseVoice;
+            }
+            
+            currentUtterance.rate = speechRate;
+            currentUtterance.pitch = 1;
+            currentUtterance.volume = 1;
+
+            // Adicionar classe de fala
+            const sentenceElement = document.getElementById('currentSentence');
+            sentenceElement.classList.add('speaking');
+
+            currentUtterance.onend = function() {
+                sentenceElement.classList.remove('speaking');
                 
-            // Se ainda não encontrou, usa a primeira voz disponível
-            if (!femaleVoice && voices.length > 0) {
-                femaleVoice = voices[0];
-            }
-        }
-
-        setVoiceList();
-        if (synth.onvoiceschanged !== undefined) {
-            synth.onvoiceschanged = setVoiceList;
-        }
-
-        // Narrar texto em voz feminina
-        function narrateText(text, callback) {
-            if (!isNarrationEnabled || synth.speaking) {
-                synth.cancel();
-            }
-            
-            // Remove marcações HTML do texto
-            const cleanText = text.replace(/\u003c[^\u003e]*\u003e/g, '');
-
-            const utterance = new SpeechSynthesisUtterance(cleanText);
-            if (femaleVoice) {
-                utterance.voice = femaleVoice;
-            }
-            utterance.rate = 0.7; // Velocidade bem pausada e calma
-            utterance.pitch = 1.0; // Tom natural e suave
-            utterance.volume = 0.8; // Volume mais suave
-
-            utterance.onend = function() {
-                if (callback) callback();
+                if (isReading) {
+                    setTimeout(() => {
+                        currentSentenceIndex++;
+                        showCurrentSentence();
+                        
+                        setTimeout(() => {
+                            if (isReading && currentSentenceIndex < sentences.length) {
+                                speakCurrentSentence();
+                            }
+                        }, 1000);
+                    }, 500);
+                }
             };
 
-            synth.speak(utterance);
+            currentUtterance.onerror = function() {
+                sentenceElement.classList.remove('speaking');
+                console.error('Erro na síntese de voz');
+            };
+
+            speechSynthesis.speak(currentUtterance);
         }
 
-        // Controlar narração
-        function toggleNarration() {
-            isNarrationEnabled = !isNarrationEnabled;
-            const btn = document.getElementById('narrationBtn');
+        function toggleReading() {
+            const playBtn = document.getElementById('playBtn');
             
-            if (isNarrationEnabled) {
-                btn.innerHTML = '🔊 Narração';
-                btn.style.background = '#ff6b6b';
+            if (isReading) {
+                stopReading();
             } else {
-                btn.innerHTML = '🔇 Mudo';
-                btn.style.background = '#666';
-                synth.cancel(); // Para qualquer narração em andamento
+                startReading();
             }
         }
 
-        // Velocidade base para acompanhar a rotação do mundo 3D
-        const sectionDuration = 8000; // 8 segundos por seção
-
-        // Função para exibir imagem dentro do texto
-        function showStoryImage(duration) {
-            const storyImage = document.getElementById('storyImage');
-            console.log('Tentando mostrar imagem:', storyImage);
+        function startReading() {
+            isReading = true;
+            const playBtn = document.getElementById('playBtn');
+            playBtn.textContent = '⏸ Pausar Leitura';
             
-            if (storyImage) {
-                // Mostra a imagem
-                storyImage.classList.add('show');
-                console.log('Classe "show" adicionada à imagem');
+            speakCurrentSentence();
+        }
+
+        function stopReading() {
+            isReading = false;
+            speechSynthesis.cancel();
+            
+            const playBtn = document.getElementById('playBtn');
+            const sentenceElement = document.getElementById('currentSentence');
+            
+            playBtn.textContent = '▶ Continuar Leitura';
+            sentenceElement.classList.remove('speaking');
+        }
+
+        function nextSentence() {
+            if (currentSentenceIndex < sentences.length - 1) {
+                speechSynthesis.cancel();
+                currentSentenceIndex++;
+                showCurrentSentence();
                 
-                // Esconde após o tempo especificado
-                setTimeout(() => {
-                    storyImage.classList.remove('show');
-                    console.log('Classe "show" removida da imagem');
-                }, duration);
-            } else {
-                console.error('Elemento storyImage não encontrado!');
-            }
-        }
-
-        // Função de teste para mostrar imagem imediatamente
-        function testShowImage() {
-            console.log('Teste: mostrando imagem...');
-            showStoryImage(5000);
-        }
-
-function showSection(index) {
-            sections.forEach((section, i) => {
-                if (i === index) {
-                    section.classList.add('visible');
-                } else {
-                    section.classList.remove('visible');
-                }
-            });
-            
-            const textContent = sections[index].querySelector('.story-text').textContent;
-            narrateText(textContent, function() {
-                // Se é a primeira seção (index 0), exibe a imagem após a narração
-                if (index === 0) {
-                    showStoryImage(3000); // Exibe por 3 segundos
-                    
-                    // Aguarda a imagem ser exibida antes de ocultar a seção
+                if (isReading) {
                     setTimeout(() => {
-                        // Oculta a seção após mostrar a imagem
-                        sections[index].classList.remove('visible');
-                        
-                        // Mostra o indicador de suspense
-                        const suspenseIndicator = document.getElementById('suspenseIndicator');
-                        suspenseIndicator.classList.add('show');
-                        
-                        // Período de suspense antes da próxima seção
-                        setTimeout(() => {
-                            // Oculta o indicador de suspense
-                            suspenseIndicator.classList.remove('show');
-                            
-                            if (currentSection < totalSections - 1) {
-                                currentSection++;
-                                showSection(currentSection);
-                            }
-                        }, 5000); // 5 segundos de suspense
-                    }, 3500); // 3.5 segundos (tempo da imagem + buffer)
-                } else {
-                    // Para outras seções, oculta imediatamente após a leitura
-                    sections[index].classList.remove('visible');
-                    
-                    // Se é a última seção (sobre o autor), abre o link da Amazon
-                    if (index === totalSections - 1) {
-                        // Mostra indicador especial para finalização
-                        const suspenseIndicator = document.getElementById('suspenseIndicator');
-                        suspenseIndicator.innerHTML = 'Abrindo página do autor na Amazon<span class="suspense-dots"><span class="dot">.</span><span class="dot">.</span><span class="dot">.</span></span>';
-                        suspenseIndicator.classList.add('show');
-                        
-                        // Aguarda 3 segundos e abre o link da Amazon
-                        setTimeout(() => {
-                            window.open('https://www.amazon.com.br/stores/Julio-Campos-Machado/author/B0FF374WNM', '_blank');
-                            suspenseIndicator.classList.remove('show');
-                            // Restaura texto original do indicador
-                            setTimeout(() => {
-                                suspenseIndicator.innerHTML = 'Preparando próxima parte<span class="suspense-dots"><span class="dot">.</span><span class="dot">.</span><span class="dot">.</span></span>';
-                            }, 1000);
-                        }, 3000);
-                    } else {
-                        // Mostra o indicador de suspense
-                        const suspenseIndicator = document.getElementById('suspenseIndicator');
-                        suspenseIndicator.classList.add('show');
-                        
-                        // Período de suspense antes da próxima seção
-                        setTimeout(() => {
-                            // Oculta o indicador de suspense
-                            suspenseIndicator.classList.remove('show');
-                            
-                            if (currentSection < totalSections - 1) {
-                                currentSection++;
-                                showSection(currentSection);
-                            }
-                        }, 5000); // 5 segundos de suspense
-                    }
+                        speakCurrentSentence();
+                    }, 1000);
                 }
-            });
-        }
-
-
-        function nextSection() {
-            if (currentSection < totalSections - 1) {
-                currentSection++;
-                showSection(currentSection);
             }
         }
 
-        function previousSection() {
-            if (currentSection > 0) {
-                currentSection--;
-                showSection(currentSection);
+        function previousSentence() {
+            if (currentSentenceIndex > 0) {
+                speechSynthesis.cancel();
+                currentSentenceIndex--;
+                showCurrentSentence();
+                
+                if (isReading) {
+                    setTimeout(() => {
+                        speakCurrentSentence();
+                    }, 1000);
+                }
             }
         }
 
-        function resetStory() {
-            currentSection = 0;
-            showSection(currentSection);
-            stopAutoPlay();
+        function restartReading() {
+            speechSynthesis.cancel();
+            currentSentenceIndex = 0;
+            isReading = false;
+            
+            const playBtn = document.getElementById('playBtn');
+            playBtn.textContent = '▶ Iniciar Leitura';
+            
+            showCurrentSentence();
         }
 
-        function toggleAutoPlay() {
-            if (isAutoPlay) {
-                stopAutoPlay();
+        function toggleSpeechRate() {
+            currentRateIndex = (currentRateIndex + 1) % speechRates.length;
+            speechRate = speechRates[currentRateIndex];
+            
+            const speedBtn = document.getElementById('speedBtn');
+            speedBtn.textContent = speechRate + 'x';
+        }
+
+        function toggleBackgroundMusic() {
+            const btn = document.getElementById('musicBtn');
+            if (backgroundMusic.paused) {
+                backgroundMusic.play();
+                btn.textContent = '🔇';
             } else {
-                startAutoPlay();
+                backgroundMusic.pause();
+                btn.textContent = '🎵';
             }
         }
 
-        function startAutoPlay() {
-            isAutoPlay = true;
-            autoPlayInterval = setInterval(() => {
-                if (currentSection < totalSections - 1) {
-                    nextSection();
-                } else {
-                    stopAutoPlay();
-                }
-            }, sectionDuration);
-        }
-
-        function stopAutoPlay() {
-            isAutoPlay = false;
-            if (autoPlayInterval) {
-                clearInterval(autoPlayInterval);
-            }
+        function changeVolume(value) {
+            backgroundMusic.volume = value / 100;
         }
 
         // Controles de teclado
-        document.addEventListener('keydown', (e) => {
+        document.addEventListener('keydown', function(e) {
             switch(e.key) {
                 case 'ArrowRight':
                 case ' ':
-                    nextSection();
+                    e.preventDefault();
+                    if (e.key === ' ') {
+                        toggleReading();
+                    } else {
+                        nextSentence();
+                    }
                     break;
                 case 'ArrowLeft':
-                    previousSection();
+                    e.preventDefault();
+                    previousSentence();
+                    break;
+                case 'Enter':
+                    e.preventDefault();
+                    toggleReading();
                     break;
                 case 'r':
                 case 'R':
-                    resetStory();
-                    break;
-                case 'a':
-                case 'A':
-                    toggleAutoPlay();
+                    e.preventDefault();
+                    restartReading();
                     break;
             }
         });
 
-        // Solicitar permissão para uso de popups
-        function requestPopupPermission() {
-            // Simulação de solicitação (substitua com a lógica desejada ou API se houver)
-            alert('Por favor, permita que a página use popups para uma melhor experiência.');
-        }
-
-        // Remover inicialização imediata - será feita após splash screen
-        // showSection(0) será chamado em initializeWebsite()
-        // requestPopupPermission(); // Removido para evitar popup antes do site carregar
-
-        // Auto-scroll suave personalizado para trabalhar sem barra de rolagem
-        function smoothScrollToCurrentSection() {
-            const storyContainer = document.querySelector('.story-container');
-            const currentSectionElement = sections[currentSection];
-            
-            if (currentSectionElement && storyContainer) {
-                // Calcula a posição da seção atual em relação ao container
-                const containerRect = storyContainer.getBoundingClientRect();
-                const sectionRect = currentSectionElement.getBoundingClientRect();
-                
-                // Se a seção não está visível ou está parcialmente visível
-                const isVisible = (
-                    sectionRect.top >= containerRect.top &&
-                    sectionRect.bottom <= containerRect.bottom
-                );
-                
-                if (!isVisible) {
-                    // Calcula o scroll necessário para centralizar a seção
-                    const scrollTop = storyContainer.scrollTop;
-                    const targetScroll = scrollTop + (sectionRect.top - containerRect.top) - (containerRect.height / 2) + (sectionRect.height / 2);
-                    
-                    // Animação suave de scroll
-                    const startScroll = scrollTop;
-                    const scrollDistance = targetScroll - startScroll;
-                    const duration = 800; // 800ms para scroll suave
-                    let startTime = null;
-                    
-                    function animateScroll(timestamp) {
-                        if (!startTime) startTime = timestamp;
-                        const progress = Math.min((timestamp - startTime) / duration, 1);
-                        
-                        // Função de easing para movimento mais suave
-                        const easeInOutCubic = progress => progress < 0.5 
-                            ? 4 * progress * progress * progress 
-                            : 1 - Math.pow(-2 * progress + 2, 3) / 2;
-                        
-                        const currentScroll = startScroll + (scrollDistance * easeInOutCubic(progress));
-                        storyContainer.scrollTop = currentScroll;
-                        
-                        if (progress < 1) {
-                            requestAnimationFrame(animateScroll);
-                        }
-                    }
-                    
-                    requestAnimationFrame(animateScroll);
-                }
-            }
-        }
-
-        // Observador para scroll automático melhorado
-        const observer = new MutationObserver((mutations) => {
-            mutations.forEach((mutation) => {
-                if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
-                    const target = mutation.target;
-                    if (target.classList.contains('visible')) {
-                        setTimeout(smoothScrollToCurrentSection, 200);
-                    }
-                }
-            });
-        });
-
-        sections.forEach(section => {
-            observer.observe(section, { 
-                attributes: true, 
-                attributeFilter: ['class'] 
-            });
-        });
-        // Configuração da música de fundo
-        let audio = new Audio('unbreakable.mp3');
-        audio.loop = true;
-        audio.volume = 0.2; // Define volume inicial em 20%
-        let isPlaying = false; // Inicia como false até conseguir tocar
-        
-        // Função para alternar play/pause da música
-        function toggleBackgroundMusic() {
-            const btn = document.getElementById('musicBtn');
-            
-            if (isPlaying) {
-                audio.pause();
-                btn.innerHTML = '🔇';
-                btn.style.background = '#666';
-                isPlaying = false;
-            } else {
-                audio.play().then(() => {
-                    btn.innerHTML = '🎵';
-                    btn.style.background = '#ff6b6b';
-                    isPlaying = true;
-                }).catch(() => {
-                    console.log('Erro ao reproduzir áudio.');
-                });
-            }
-        }
-        
-        // Função para controlar o volume
-        function changeVolume(value) {
-            audio.volume = value / 100;
-            document.getElementById('volumeValue').innerHTML = value + '%';
-        }
-        
-        // Função para iniciar música automaticamente
-        function startBackgroundMusic() {
-            audio.play().then(() => {
-                console.log('Música de fundo iniciada automaticamente em 20%.');
-                isPlaying = true;
-                document.getElementById('musicBtn').innerHTML = '🎵';
-                document.getElementById('musicBtn').style.background = '#ff6b6b';
-            }).catch(function(error) {
-                console.log('Autoplay bloqueado pelo navegador. Clique no botão de música para iniciar.');
-                isPlaying = false;
-                document.getElementById('musicBtn').innerHTML = '🔇';
-                document.getElementById('musicBtn').style.background = '#666';
-            });
-        }
-
-        // Função para controlar a splash screen
-        function initSplashScreen() {
-            const splash = document.querySelector('.splash-screen');
-            
-            // Após 4 segundos, inicia o fade out
-            setTimeout(() => {
-                splash.classList.add('fade-out');
-                
-                // Após a animação de fade out (1 segundo), remove completamente e inicia o site
-                setTimeout(() => {
-                    splash.style.display = 'none';
-                    // Inicializar o site após a splash screen
-                    initializeWebsite();
-                }, 1000);
-            }, 4000); // 4 segundos de exibição
-        }
-
-        // Função para inicializar o website após a splash screen
-        function initializeWebsite() {
-            // Inicializar a primeira seção
-            showSection(0);
-            // Tentar iniciar a música
-            setTimeout(startBackgroundMusic, 500);
-            console.log('Site inicializado após splash screen');
-        }
-
-        // Inicializar splash screen quando a página carregar
-        document.addEventListener('DOMContentLoaded', function() {
-            initSplashScreen();
-        });
-</script>
+        // Carregar vozes quando disponíveis
+        speechSynthesis.onvoiceschanged = function() {
+            // Vozes carregadas
+        };
+    </script>
 </body>
 </html>
+
