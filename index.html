@@ -686,23 +686,49 @@ function showSection(index) {
             
             const textContent = sections[index].querySelector('.story-text').textContent;
             narrateText(textContent, function() {
-                // Oculta a seção após a leitura
-                sections[index].classList.remove('visible');
-                
-                // Mostra o indicador de suspense
-                const suspenseIndicator = document.getElementById('suspenseIndicator');
-                suspenseIndicator.classList.add('show');
-                
-                // Aumenta o tempo de suspense para 5 segundos antes de mostrar a próxima seção
-                setTimeout(() => {
-                    // Oculta o indicador de suspense
-                    suspenseIndicator.classList.remove('show');
+                // Se é a primeira seção (index 0), exibe a imagem após a narração
+                if (index === 0) {
+                    showStoryImage(3000); // Exibe por 3 segundos
                     
-                    if (currentSection < totalSections - 1) {
-                        currentSection++;
-                        showSection(currentSection);
-                    }
-                }, 5000); // 5 segundos de suspense
+                    // Aguarda a imagem ser exibida antes de ocultar a seção
+                    setTimeout(() => {
+                        // Oculta a seção após mostrar a imagem
+                        sections[index].classList.remove('visible');
+                        
+                        // Mostra o indicador de suspense
+                        const suspenseIndicator = document.getElementById('suspenseIndicator');
+                        suspenseIndicator.classList.add('show');
+                        
+                        // Período de suspense antes da próxima seção
+                        setTimeout(() => {
+                            // Oculta o indicador de suspense
+                            suspenseIndicator.classList.remove('show');
+                            
+                            if (currentSection < totalSections - 1) {
+                                currentSection++;
+                                showSection(currentSection);
+                            }
+                        }, 5000); // 5 segundos de suspense
+                    }, 3500); // 3.5 segundos (tempo da imagem + buffer)
+                } else {
+                    // Para outras seções, oculta imediatamente após a leitura
+                    sections[index].classList.remove('visible');
+                    
+                    // Mostra o indicador de suspense
+                    const suspenseIndicator = document.getElementById('suspenseIndicator');
+                    suspenseIndicator.classList.add('show');
+                    
+                    // Período de suspense antes da próxima seção
+                    setTimeout(() => {
+                        // Oculta o indicador de suspense
+                        suspenseIndicator.classList.remove('show');
+                        
+                        if (currentSection < totalSections - 1) {
+                            currentSection++;
+                            showSection(currentSection);
+                        }
+                    }, 5000); // 5 segundos de suspense
+                }
             });
         }
 
