@@ -377,8 +377,12 @@
             updateProgressBar(index);
             const textContent = sections[index].querySelector('.story-text').textContent;
             narrateText(textContent, function() {
-                if (isAutoPlay && currentSection < totalSections - 1) {
-                    setTimeout(nextSection, 1000); // Delay before moving to next section
+                // Automaticamente passa para a próxima seção após terminar a narração
+                if (currentSection < totalSections - 1) {
+                    setTimeout(() => {
+                        currentSection++;
+                        showSection(currentSection);
+                    }, 1500); // Delay de 1.5 segundos antes da próxima seção
                 }
             });
         }
