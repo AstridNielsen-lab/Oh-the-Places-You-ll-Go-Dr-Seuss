@@ -340,18 +340,19 @@
 
     /* Estilo para exibição de imagem dentro do container */
     .story-image {
-        display: none;
         text-align: center;
         margin: 30px 0;
         opacity: 0;
         transform: scale(0.8);
         transition: all 0.8s ease-in-out;
+        height: 0;
+        overflow: hidden;
     }
 
     .story-image.show {
-        display: block;
         opacity: 1;
         transform: scale(1);
+        height: auto;
     }
 
     .story-image img {
@@ -360,6 +361,8 @@
         border-radius: 15px;
         box-shadow: 0 10px 30px rgba(0,0,0,0.3);
         border: 3px solid rgba(255, 255, 255, 0.8);
+        display: block;
+        margin: 0 auto;
     }
     </style>
 </head>
@@ -589,14 +592,27 @@
         // Função para exibir imagem dentro do texto
         function showStoryImage(duration) {
             const storyImage = document.getElementById('storyImage');
+            console.log('Tentando mostrar imagem:', storyImage);
             
-            // Mostra a imagem
-            storyImage.classList.add('show');
-            
-            // Esconde após o tempo especificado
-            setTimeout(() => {
-                storyImage.classList.remove('show');
-            }, duration);
+            if (storyImage) {
+                // Mostra a imagem
+                storyImage.classList.add('show');
+                console.log('Classe "show" adicionada à imagem');
+                
+                // Esconde após o tempo especificado
+                setTimeout(() => {
+                    storyImage.classList.remove('show');
+                    console.log('Classe "show" removida da imagem');
+                }, duration);
+            } else {
+                console.error('Elemento storyImage não encontrado!');
+            }
+        }
+
+        // Função de teste para mostrar imagem imediatamente
+        function testShowImage() {
+            console.log('Teste: mostrando imagem...');
+            showStoryImage(5000);
         }
 
         function showSection(index) {
