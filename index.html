@@ -39,6 +39,7 @@
             justify-content: center;
             padding: 20px;
             box-sizing: border-box;
+            pointer-events: none; /* Permite cliques passarem para o fundo */
         }
 
         .world-container {
@@ -70,6 +71,7 @@
             overflow-y: auto;
             position: relative;
             margin: 0 auto;
+            pointer-events: auto; /* Reativa eventos no container do livro */
         }
 
         .book-title {
@@ -123,6 +125,7 @@
             display: flex;
             gap: 10px;
             z-index: 1000;
+            pointer-events: auto; /* Garante que os controles funcionem */
         }
 
         .btn {
