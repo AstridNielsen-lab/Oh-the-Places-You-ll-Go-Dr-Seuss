@@ -223,6 +223,7 @@
     </div>
 
     <div class="controls">
+        <button class="btn" onclick="toggleNarration()" id="narrationBtn">🔊 Narração</button>
         <button class="btn" onclick="toggleAutoPlay()">⏯️ Auto</button>
         <button class="btn" onclick="previousSection()">⏮️ Anterior</button>
         <button class="btn" onclick="nextSection()">⏭️ Próximo</button>
@@ -233,9 +234,70 @@
         let currentSection = 0;
         let isAutoPlay = false;
         let autoPlayInterval;
+        let isNarrationEnabled = true;
         const sections = document.querySelectorAll('.story-section');
         const totalSections = sections.length;
-        
+
+        const synth = window.speechSynthesis;
+        let voices = [];
+        let femaleVoice = null;
+
+        function setVoiceList() {
+            voices = synth.getVoices();
+            // Busca por vozes femininas em português ou inglês
+            femaleVoice = voices.find(voice => 
+                (voice.lang.includes('pt') && voice.name.toLowerCase().includes('female')) ||
+                (voice.lang.includes('pt') && voice.name.toLowerCase().includes('feminina')) ||
+                (voice.lang.includes('en') && voice.name.toLowerCase().includes('female')) ||
+                voice.name.toLowerCase().includes('alice') ||
+                voice.name.toLowerCase().includes('samantha') ||
+                voice.name.toLowerCase().includes('karen') ||
+                voice.name.toLowerCase().includes('helena')
+            ) || voices.find(voice => voice.name.toLowerCase().includes('google')) || voices[0];
+        }
+
+        setVoiceList();
+        if (synth.onvoiceschanged !== undefined) {
+            synth.onvoiceschanged = setVoiceList;
+        }
+
+        // Narrar texto em voz feminina
+        function narrateText(text) {
+            if (!isNarrationEnabled) return;
+            
+            if (synth.speaking) {
+                synth.cancel();
+            }
+            
+            // Remove marcações HTML do texto
+            const cleanText = text.replace(/<[^>]*>/g, '');
+            
+            const utterance = new SpeechSynthesisUtterance(cleanText);
+            if (femaleVoice) {
+                utterance.voice = femaleVoice;
+            }
+            utterance.rate = 0.8; // Velocidade mais pausada
+            utterance.pitch = 1.1; // Tom ligeiramente mais agudo
+            utterance.volume = 0.9; // Volume
+            
+            synth.speak(utterance);
+        }
+
+        // Controlar narração
+        function toggleNarration() {
+            isNarrationEnabled = !isNarrationEnabled;
+            const btn = document.getElementById('narrationBtn');
+            
+            if (isNarrationEnabled) {
+                btn.innerHTML = '🔊 Narração';
+                btn.style.background = '#ff6b6b';
+            } else {
+                btn.innerHTML = '🔇 Mudo';
+                btn.style.background = '#666';
+                synth.cancel(); // Para qualquer narração em andamento
+            }
+        }
+
         // Velocidade base para acompanhar a rotação do mundo 3D
         const sectionDuration = 8000; // 8 segundos por seção
 
@@ -249,6 +311,8 @@
             });
             
             updateProgressBar(index);
+            const textContent = sections[index].querySelector('.story-text').textContent;
+            narrateText(textContent);
         }
 
         function updateProgressBar(index) {
