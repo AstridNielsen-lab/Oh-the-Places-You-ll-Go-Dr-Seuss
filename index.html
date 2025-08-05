@@ -135,12 +135,12 @@
 
         /* Imagem flutuante */
         .floating-image {
-            position: absolute;
+            position: fixed;
             width: 100px; /* Tamanho da imagem */
             height: 100px;
             opacity: 0;
             transition: opacity 1s ease-in-out, transform 5s linear;
-            z-index: 5;
+            z-index: 10000; /* Z-index muito alto para aparecer acima de tudo */
             pointer-events: none;
         }
 
@@ -809,7 +809,7 @@
         function startFloatingImage() {
             floatingImageInterval = setInterval(() => {
                 moveFloatingImage();
-            }, 3000 + Math.random() * 4000); // Entre 3 a 7 segundos
+            }, 2000 + Math.random() * 5000); // Entre 2 a 7 segundos (mais frequente)
         }
 
         function moveFloatingImage() {
@@ -817,7 +817,7 @@
             floatingImage.classList.remove('visible');
             
             setTimeout(() => {
-                // Posição aleatória na tela
+                // Posição aleatória na tela (pode aparecer em qualquer lugar)
                 const maxX = window.innerWidth - 100; // 100px é a largura da imagem
                 const maxY = window.innerHeight - 100; // 100px é a altura da imagem
                 
@@ -828,13 +828,17 @@
                 floatingImage.style.left = randomX + 'px';
                 floatingImage.style.top = randomY + 'px';
                 
+                // Adicionar um pequeno efeito de rotação aleatória
+                const randomRotation = Math.random() * 360;
+                floatingImage.style.transform = `rotate(${randomRotation}deg)`;
+                
                 // Mostrar a imagem
                 floatingImage.classList.add('visible');
                 
-                // Esconder após 2-4 segundos
+                // Esconder após 2-5 segundos (tempo um pouco mais variável)
                 setTimeout(() => {
                     floatingImage.classList.remove('visible');
-                }, 2000 + Math.random() * 2000);
+                }, 2000 + Math.random() * 3000);
                 
             }, 500); // Aguardar fade out
         }
