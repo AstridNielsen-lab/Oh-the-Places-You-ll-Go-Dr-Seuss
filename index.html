@@ -394,6 +394,118 @@
             }
         }
 
+        /* Botão da Amazon */
+        .amazon-button {
+            display: none;
+            margin-top: 30px;
+            padding: 15px 30px;
+            background: linear-gradient(45deg, #ff9900, #ffad33);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 153, 0, 0.3);
+            animation: pulse-amazon 2s infinite;
+        }
+
+        .amazon-button:hover {
+            background: linear-gradient(45deg, #e68a00, #ff9900);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 153, 0, 0.4);
+        }
+
+        @keyframes pulse-amazon {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        /* Modal de confirmação */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 10000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 10% auto;
+            padding: 30px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 500px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            animation: modalSlideIn 0.3s ease-out;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px) scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .modal h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+
+        .modal p {
+            color: #666;
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        .modal-btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .modal-btn.confirm {
+            background: linear-gradient(45deg, #ff9900, #ffad33);
+            color: white;
+        }
+
+        .modal-btn.confirm:hover {
+            background: linear-gradient(45deg, #e68a00, #ff9900);
+            transform: translateY(-2px);
+        }
+
+        .modal-btn.cancel {
+            background: #f0f0f0;
+            color: #666;
+        }
+
+        .modal-btn.cancel:hover {
+            background: #e0e0e0;
+            color: #333;
+        }
+
         @media (max-width: 1200px) {
             .container {
                 flex-direction: column;
@@ -416,6 +528,15 @@
 
             .current-sentence {
                 font-size: 1.4em;
+            }
+
+            .modal-content {
+                margin: 20% auto;
+                padding: 20px;
+            }
+
+            .modal-buttons {
+                flex-direction: column;
             }
         }
     </style>
@@ -462,6 +583,11 @@
                 <div class="current-sentence" id="currentSentence"></div>
             </div>
 
+            <!-- Botão da Amazon (aparece no final) -->
+            <button class="amazon-button" id="amazonButton" onclick="showAmazonModal()">
+                📚 Ver livros de Julio Campos Machado na Amazon
+            </button>
+
             <!-- Indicador de progresso -->
             <div class="progress-indicator" id="progressIndicator">
                 Frase 1 de 150
@@ -492,6 +618,19 @@
         <source src="/unbreakable.mp3" type="audio/mpeg">
         <source src="/unbreakable.mp3" type="audio/mp3">
     </audio>
+
+    <!-- Modal de confirmação da Amazon -->
+    <div id="amazonModal" class="modal">
+        <div class="modal-content">
+            <h2>📚 Descobrir mais livros?</h2>
+            <p>Gostaria de conhecer outros trabalhos incríveis de <strong>Julio Campos Machado</strong> na Amazon?</p>
+            <p style="color: #ff9900; font-weight: bold;">Mais de 50 livros publicados, incluindo a série Juliette Psicose!</p>
+            <div class="modal-buttons">
+                <button class="modal-btn confirm" onclick="goToAmazon()">✨ Sim, vamos lá!</button>
+                <button class="modal-btn cancel" onclick="closeAmazonModal()">Talvez depois</button>
+            </div>
+        </div>
+    </div>
 
     <script>
         // Texto completo dividido em frases
@@ -667,6 +806,8 @@ function showCurrentSentence() {
                     sentenceElement.textContent = "Fim da leitura! 🎉";
                     sentenceElement.classList.add('visible');
                     stopReading();
+                    // Mostrar botão da Amazon
+                    showAmazonButton();
                 }
             }, 400);
         }
@@ -963,6 +1104,41 @@ function showCurrentSentence() {
         setTimeout(() => {
             startFloatingImage();
         }, 5000);
+
+        // Funções do botão da Amazon
+        function showAmazonButton() {
+            const amazonButton = document.getElementById('amazonButton');
+            amazonButton.style.display = 'block';
+            
+            // Mostrar modal automaticamente após 3 segundos
+            setTimeout(() => {
+                showAmazonModal();
+            }, 3000);
+        }
+
+        function showAmazonModal() {
+            const modal = document.getElementById('amazonModal');
+            modal.style.display = 'block';
+        }
+
+        function closeAmazonModal() {
+            const modal = document.getElementById('amazonModal');
+            modal.style.display = 'none';
+        }
+
+        function goToAmazon() {
+            // Abrir em uma nova aba
+            window.open('https://www.amazon.com.br/stores/Julio-Campos-Machado/author/B0FF374WNM', '_blank');
+            closeAmazonModal();
+        }
+
+        // Fechar modal clicando fora dele
+        window.onclick = function(event) {
+            const modal = document.getElementById('amazonModal');
+            if (event.target === modal) {
+                closeAmazonModal();
+            }
+        };
     </script>
 </body>
 </html>
