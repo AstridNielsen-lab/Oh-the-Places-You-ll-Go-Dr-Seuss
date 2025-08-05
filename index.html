@@ -415,7 +415,7 @@
 
     <!-- Imagem flutuante -->
     <div class="floating-image" id="floatingImage">
-        <img id="floatingImg" src="Seuss.png" alt="Imagem flutuante" loading="lazy" onerror="console.log('Erro ao carregar imagem:', this.src); this.style.display='none';">
+        <img id="floatingImg" src="Seuss.png?v=20250805" alt="Imagem flutuante" loading="lazy" onerror="console.log('Erro ao carregar imagem:', this.src); this.style.display='none';">
     </div>
 
     <!-- Container do livro sobre o fundo -->
@@ -807,6 +807,7 @@
         let floatingImage = document.getElementById('floatingImage');
         const floatingImgElement = document.getElementById('floatingImg');
         const imageSources = ['Seuss.png', 'dragao.png', 'elefante.png']; // Imagens que aparecem aleatoriamente
+        const cacheBreaker = Date.now(); // Para forçar atualização das imagens
 
         function startFloatingImage() {
             floatingImageInterval = setInterval(() => {
@@ -822,7 +823,7 @@
                 // Selecionar imagem aleatória
                 const randomImageIndex = Math.floor(Math.random() * imageSources.length);
                 const selectedImage = imageSources[randomImageIndex];
-                floatingImgElement.src = selectedImage;
+                floatingImgElement.src = selectedImage + '?v=' + cacheBreaker;
                 
                 // Posição aleatória na tela, mas evitando o container
                 const container = document.querySelector('.story-container');
