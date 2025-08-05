@@ -138,13 +138,16 @@
             position: absolute;
             width: 100px; /* Tamanho da imagem */
             height: 100px;
-            background-image: url('Seuss.png');
-            background-size: contain;
-            background-repeat: no-repeat;
             opacity: 0;
             transition: opacity 1s ease-in-out, transform 5s linear;
             z-index: 5;
             pointer-events: none;
+        }
+
+        .floating-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
         }
 
         .floating-image.visible {
@@ -411,7 +414,9 @@
     </div>
 
     <!-- Imagem flutuante -->
-    <div class="floating-image" id="floatingImage"></div>
+    <div class="floating-image" id="floatingImage">
+        <img src="./Seuss.png" alt="Dr. Seuss" loading="lazy" onerror="this.style.display='none'">
+    </div>
 
     <!-- Container do livro sobre o fundo -->
     <div class="container">
@@ -450,8 +455,9 @@
     </div>
 
     <!-- Áudio de fundo -->
-    <audio id="backgroundMusic" loop>
-        <source src="unbreakable.mp3" type="audio/mp3">
+    <audio id="backgroundMusic" loop preload="auto">
+        <source src="./unbreakable.mp3" type="audio/mpeg">
+        <source src="./unbreakable.mp3" type="audio/mp3">
     </audio>
 
     <script>
