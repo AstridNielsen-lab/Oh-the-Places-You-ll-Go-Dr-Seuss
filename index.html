@@ -100,7 +100,7 @@
         .story-text {
             font-size: 1.3em;
             line-height: 1.6;
-            text-align: justify;
+            text-align: center;
             margin-bottom: 20px;
         }
 
@@ -829,8 +829,15 @@ function showSection(index) {
             }
         });
 
+        // Solicitar permissão para uso de popups
+        function requestPopupPermission() {
+            // Simulação de solicitação (substitua com a lógica desejada ou API se houver)
+            alert('Por favor, permita que a página use popups para uma melhor experiência.');
+        }
+
         // Inicializar
         showSection(0);
+        requestPopupPermission();
 
         // Auto-scroll suave personalizado para trabalhar sem barra de rolagem
         function smoothScrollToCurrentSection() {
