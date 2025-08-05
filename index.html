@@ -324,16 +324,14 @@
         }
 
         // Narrar texto em voz feminina
-        function narrateText(text) {
-            if (!isNarrationEnabled) return;
-            
-            if (synth.speaking) {
+        function narrateText(text, callback) {
+            if (!isNarrationEnabled || synth.speaking) {
                 synth.cancel();
             }
             
             // Remove marcações HTML do texto
-            const cleanText = text.replace(/<[^>]*>/g, '');
-            
+            const cleanText = text.replace(/\u003c[^\u003e]*\u003e/g, '');
+
             const utterance = new SpeechSynthesisUtterance(cleanText);
             if (femaleVoice) {
                 utterance.voice = femaleVoice;
@@ -341,7 +339,11 @@
             utterance.rate = 0.7; // Velocidade bem pausada e calma
             utterance.pitch = 1.0; // Tom natural e suave
             utterance.volume = 0.8; // Volume mais suave
-            
+
+            utterance.onend = function() {
+                if (callback) callback();
+            };
+
             synth.speak(utterance);
         }
 
@@ -374,7 +376,11 @@
             
             updateProgressBar(index);
             const textContent = sections[index].querySelector('.story-text').textContent;
-            narrateText(textContent);
+            narrateText(textContent, function() {
+                if (isAutoPlay && currentSection < totalSections - 1) {
+                    setTimeout(nextSection, 1000); // Delay before moving to next section
+                }
+            });
         }
 
         function updateProgressBar(index) {
