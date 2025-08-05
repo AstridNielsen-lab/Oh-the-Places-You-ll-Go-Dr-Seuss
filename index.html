@@ -708,6 +708,24 @@
             document.getElementById('musicBtn').innerHTML = '🔇';
             document.getElementById('musicBtn').style.background = '#666';
         });
+
+        // Função para controlar a splash screen
+        function initSplashScreen() {
+            const splash = document.querySelector('.splash-screen');
+            
+            // Após 4 segundos, inicia o fade out
+            setTimeout(() => {
+                splash.classList.add('fade-out');
+                
+                // Após a animação de fade out (1 segundo), remove completamente
+                setTimeout(() => {
+                    splash.style.display = 'none';
+                }, 1000);
+            }, 4000); // 4 segundos de exibição
+        }
+
+        // Inicializar splash screen quando a página carregar
+        document.addEventListener('DOMContentLoaded', initSplashScreen);
 </script>
 </body>
 </html>
