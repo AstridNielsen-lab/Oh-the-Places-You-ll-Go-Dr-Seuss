@@ -559,44 +559,72 @@
         function setVoiceList() {
             voices = synth.getVoices();
             
-            // Lista de nomes de vozes femininas conhecidas
+            // Lista de nomes de vozes femininas conhecidas (priorizando francesas)
             const femaleVoiceNames = [
+                'amelie', 'audrey', 'aurelia', 'marie', 'francoise', 'brigitte', 'camille',
                 'alice', 'samantha', 'karen', 'helena', 'ana', 'maria', 'lucia', 'sofia',
                 'joana', 'monica', 'fernanda', 'beatriz', 'clara', 'julia', 'isabella',
                 'google português', 'google brasil', 'microsoft helena', 'microsoft maria',
                 'vicki', 'victoria', 'susan', 'allison', 'ava', 'serena', 'catherine',
-                'fiona', 'kate', 'carmit', 'amelie', 'audrey', 'aurelia', 'marie'
+                'fiona', 'kate', 'carmit'
             ];
             
-            // Busca vozes femininas por prioridade
+            // Busca vozes femininas por prioridade (com foco em sotaque francês)
             femaleVoice = 
-                // 1. Vozes em português com nomes femininos
+                // 1. Vozes francesas em português brasileiro
+                voices.find(voice => 
+                    (voice.lang.includes('pt-BR') || voice.lang.includes('pt_BR')) &&
+                    (voice.name.toLowerCase().includes('french') ||
+                     voice.name.toLowerCase().includes('francais') ||
+                     voice.name.toLowerCase().includes('france') ||
+                     voice.name.toLowerCase().includes('amelie') ||
+                     voice.name.toLowerCase().includes('audrey') ||
+                     voice.name.toLowerCase().includes('marie'))
+                ) ||
+                // 2. Vozes francesas femininas (qualquer idioma)
+                voices.find(voice => 
+                    (voice.name.toLowerCase().includes('french') ||
+                     voice.name.toLowerCase().includes('francais') ||
+                     voice.name.toLowerCase().includes('france')) &&
+                    (voice.name.toLowerCase().includes('female') ||
+                     voice.name.toLowerCase().includes('feminina') ||
+                     femaleVoiceNames.some(name => voice.name.toLowerCase().includes(name)))
+                ) ||
+                // 3. Vozes em português com nomes femininos franceses
+                voices.find(voice => 
+                    voice.lang.includes('pt') && 
+                    (voice.name.toLowerCase().includes('amelie') ||
+                     voice.name.toLowerCase().includes('audrey') ||
+                     voice.name.toLowerCase().includes('aurelia') ||
+                     voice.name.toLowerCase().includes('marie'))
+                ) ||
+                // 4. Vozes em português com nomes femininos
                 voices.find(voice => 
                     voice.lang.includes('pt') && 
                     femaleVoiceNames.some(name => voice.name.toLowerCase().includes(name))
                 ) ||
-                // 2. Vozes em português do Brasil
+                // 5. Vozes em português do Brasil
                 voices.find(voice => 
                     (voice.lang.includes('pt-BR') || voice.lang.includes('pt_BR')) &&
                     !voice.name.toLowerCase().includes('male') &&
                     !voice.name.toLowerCase().includes('masculin')
                 ) ||
-                // 3. Vozes femininas em inglês
+                // 6. Vozes femininas em inglês
                 voices.find(voice => 
                     voice.lang.includes('en') && 
                     femaleVoiceNames.some(name => voice.name.toLowerCase().includes(name))
                 ) ||
-                // 4. Qualquer voz que contenha 'female' ou 'feminina'
+                // 7. Qualquer voz que contenha 'female' ou 'feminina'
                 voices.find(voice => 
                     voice.name.toLowerCase().includes('female') ||
                     voice.name.toLowerCase().includes('feminina')
                 ) ||
-                // 5. Vozes Google (geralmente femininas por padrão)
+                // 8. Vozes Google (geralmente femininas por padrão)
                 voices.find(voice => 
                     voice.name.toLowerCase().includes('google') &&
                     !voice.name.toLowerCase().includes('male')
                 ) ||
-                // 6. Último recurso: primeira voz que NÃO seja explicitamente masculina
+                // 9. Último recurso: primeira voz que NÃO seja explicitamente masculina
                 voices.find(voice => 
                     !voice.name.toLowerCase().includes('male') &&
                     !voice.name.toLowerCase().includes('masculin') &&
