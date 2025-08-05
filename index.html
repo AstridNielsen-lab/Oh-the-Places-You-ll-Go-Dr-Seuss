@@ -9,17 +9,34 @@
             margin: 0;
             padding: 0;
             font-family: 'Comic Sans MS', cursive, sans-serif;
-            background: linear-gradient(135deg, #ff6b6b, #4ecdc4, #45b7d1);
-            overflow-x: hidden;
+            overflow: hidden;
             color: #333;
+            position: relative;
+            height: 100vh;
+        }
+
+        .background-world {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+        }
+
+        .background-world iframe {
+            width: 100%;
+            height: 100%;
+            border: 0;
         }
 
         .container {
+            position: relative;
+            z-index: 10;
             display: flex;
             height: 100vh;
             align-items: center;
             justify-content: center;
-            gap: 20px;
             padding: 20px;
             box-sizing: border-box;
         }
@@ -39,17 +56,17 @@
         }
 
         .story-container {
-            flex: 1;
-            max-width: 500px;
-            height: 700px;
-            background: rgba(255, 255, 255, 0.75);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 20px;
-            padding: 30px;
+            max-width: 600px;
+            width: 100%;
+            height: 80vh;
+            background: rgba(255, 255, 255, 0.4); /* Maior transparência */
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 25px;
+            padding: 40px;
             box-sizing: border-box;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.1);
             overflow-y: auto;
             position: relative;
         }
@@ -154,15 +171,16 @@
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="world-container">
-            <iframe 
-                src="https://skybox.blockadelabs.com/e/5f222a5a2d42e1510a1f029bc723817e" 
-                class="world-frame"
-                allow="fullscreen">
-            </iframe>
-        </div>
+    <!-- Fundo 3D em toda a página -->
+    <div class="background-world">
+        <iframe 
+            src="https://skybox.blockadelabs.com/e/5f222a5a2d42e1510a1f029bc723817e" 
+            allow="fullscreen">
+        </iframe>
+    </div>
 
+    <!-- Container do livro sobre o fundo -->
+    <div class="container">
         <div class="story-container">
             <div class="book-title">Oh, the Places You'll Go!</div>
             <div class="book-author">Inspirado na obra de Dr. Seuss</div>
