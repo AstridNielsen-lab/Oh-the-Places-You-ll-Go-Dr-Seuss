@@ -105,9 +105,11 @@
             color: #333;
             opacity: 0;
             transform: translateY(20px);
-            transition: all 0.8s ease-in-out;
+            transition: opacity 0.8s ease-in-out, transform 0.8s ease-in-out;
             max-width: 100%;
             padding: 20px;
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            text-align: center;
         }
 
         .current-sentence.visible {
@@ -116,9 +118,45 @@
         }
 
         .current-sentence.speaking {
-            color: #ff6b6b;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
             animation: pulse 2s infinite;
+        }
+
+        /* Efeito de máquina de escrever e karaokê */
+        .typewriter-char {
+            opacity: 0;
+            color: #999;
+            transition: all 0.3s ease;
+        }
+
+        .typewriter-char.typed {
+            opacity: 1;
+            color: #333;
+        }
+
+        .typewriter-char.speaking {
+            color: #ff6b6b;
+            text-shadow: 2px 2px 4px rgba(255, 107, 107, 0.3);
+            font-weight: bold;
+            transform: scale(1.05);
+        }
+
+        .typewriter-char.spoken {
+            color: #4CAF50;
+            text-shadow: 1px 1px 2px rgba(76, 175, 80, 0.2);
+        }
+
+        .cursor {
+            display: inline-block;
+            background-color: #ff6b6b;
+            width: 2px;
+            height: 1.2em;
+            margin-left: 2px;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
         }
 
         @keyframes pulse {
@@ -574,6 +612,12 @@
         let speechRate = 1;
         let speechRates = [0.5, 0.75, 1, 1.25, 1.5];
         let currentRateIndex = 2;
+        
+        // Variáveis para o efeito de máquina de escrever e karaokê
+        let typewriterTimeout;
+        let karaokeTimeout;
+        let currentCharIndex = 0;
+        let isTyping = false;
 
         // Inicialização
         document.addEventListener('DOMContentLoaded', function() {
@@ -606,23 +650,73 @@
             updateProgressIndicator();
         }
 
-        function showCurrentSentence() {
+function showCurrentSentence() {
             const sentenceElement = document.getElementById('currentSentence');
+            
+            // Reset typing state
+            currentCharIndex = 0;
+            isTyping = true;
+            clearTimeout(typewriterTimeout);
+            clearTimeout(karaokeTimeout);
             
             // Fade out
             sentenceElement.classList.remove('visible');
             
             setTimeout(() => {
                 if (currentSentenceIndex < sentences.length) {
-                    sentenceElement.textContent = sentences[currentSentenceIndex];
+                    sentenceElement.innerHTML = '';
+                    const sentenceText = sentences[currentSentenceIndex];
+                    [...sentenceText].forEach((char, index) => {
+                        const span = document.createElement('span');
+                        span.textContent = char;
+                        span.classList.add('typewriter-char');
+                        sentenceElement.appendChild(span);
+                    });
                     sentenceElement.classList.add('visible');
                     updateProgressIndicator();
+                    typewriterEffect(sentenceElement);
                 } else {
                     sentenceElement.textContent = "Fim da leitura! 🎉";
                     sentenceElement.classList.add('visible');
                     stopReading();
                 }
             }, 400);
+        }
+
+        function typewriterEffect(sentenceElement) {
+            if (currentCharIndex < sentenceElement.children.length && isTyping) {
+                const charElement = sentenceElement.children[currentCharIndex];
+                charElement.classList.add('typed');
+                currentCharIndex++;
+                typewriterTimeout = setTimeout(() => {
+                    typewriterEffect(sentenceElement);
+                }, 100);
+            } else {
+                isTyping = false;
+                startKaraokeEffect(sentenceElement);
+            }
+        }
+
+        function startKaraokeEffect(sentenceElement) {
+            let speakingCharIndex = 0;
+
+            function karaokeStep() {
+                if (speakingCharIndex < sentenceElement.children.length) {
+                    sentenceElement.children[speakingCharIndex].classList.add('speaking');
+                    if (speakingCharIndex > 0) {
+                        sentenceElement.children[speakingCharIndex - 1].classList.remove('speaking');
+                        sentenceElement.children[speakingCharIndex - 1].classList.add('spoken');
+                    }
+                    speakingCharIndex++;
+                    karaokeTimeout = setTimeout(karaokeStep, 100);
+                } else {
+                    sentenceElement.children[speakingCharIndex - 1].classList.remove('speaking');
+                    sentenceElement.children[speakingCharIndex - 1].classList.add('spoken');
+                    if (isReading) speakCurrentSentence();
+                }
+            }
+
+            karaokeStep();
         }
 
         function updateProgressIndicator() {
